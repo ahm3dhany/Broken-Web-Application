@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head lang="en">
+        <title>Six-Word Stories</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+        <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.4/css/bootstrap.min.css"
+              th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}"
+              rel="stylesheet" media="screen" />
+
+        <script src="http://cdn.jsdelivr.net/webjars/jquery/2.1.4/jquery.min.js"
+        th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+
+        <link href="../static/css/spring-core.css"
+              th:href="@{css/spring-core.css}" rel="stylesheet" media="screen"/>
+    </head>
+    <body>
+        <div class="container">
+            <header th:replace="fragments/header :: header">
+                <p>header with links etc</p>
+            </header>
+        </div>
+
+
+
+        <div class="container">
+            <div th:if="${not #lists.isEmpty(posts)}">
+                <h1><i><b>Six</b>-Word Stories</i></h1>
+                <table class="table table-striped">
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Content</th>
+                    </tr>
+                    <tr th:each="post: ${posts}">
+                        <td th:text="${posts.indexOf(post)+1}"></td>
+                        <td th:text="${post.title}"></td>
+                        <!--  -->
+                        <td th:utext="${post.content}"></td>
+                    </tr>
+                </table>
+
+            </div>
+
+        </div>
+
+        <div class="container">
+            <h4>Add your 6-word story</h4>
+            <form th:action="@{/sixWordStories}" method="POST">
+                <input type="text" name="title"/>
+                <input type="text" name="content"/>
+                <input type="submit" value="Add"/>
+            </form>
+        </div>
+    </body>
+</html>
