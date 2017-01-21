@@ -11,6 +11,12 @@
             <ul>
                 <li><a th:href="@{/sixWordStories}">Six Word Stories</a></li>
                 <li><a th:href="@{/quotes}">Quotes</a></li>
+                
+                <!-- A10-Unvalidated Redirects and Forwards Vulnerability -->
+                <li><a th:href="@{/ourFriend}" target="_blank">Our Friend</a></li>
+                
+                <!-- A10-Unvalidated Redirects and Forwards Fix -->
+                <!-- <li><a th:href="@{/ourFriend}" target="_blank" rel="noreferrer noopenner">Our Friend</a></li> -->
             </ul>
         </header>
 

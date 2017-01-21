@@ -68,3 +68,45 @@ SQL injection attacks can be prevented very easy. In our example we'll use "Para
 ` pstmt.execute();`
 
 ` pstmt.close();`
+
+## _Vulnerability:_ **A10-Unvalidated Redirects and Forwards**
+
+> Web applications frequently redirect and forward users to other pages and websites, and use untrusted data to determine the destination pages. Without proper validation, attackers can redirect victims to phishing or malware sites, or use forwards to access unauthorized pages.
+
+### _required steps to reproduce the vulnerability:_
+
+1. Navigate to either Six-Word Sories page (i.e. http://localhost:8080/sixWordStories) or Quotes page (i.e. http://localhost:8080/quotes).
+2. At the top of the page, click on "Our Friend" link. It will open a new tab on your browser and display a page that tells you "If this vulnerability worked, your previous page is now redirected to www.hackerrank.com".
+3. Check your previous page now to make sure that the redirection happened.
+
+### _where the vulnerability came from:_
+
+In "header.html" template, the "Our Friend" link is constructed using this piece of code:
+
+` <li><a th:href="@{/ourFriend}" target="_blank">Our Friend</a></li>`
+
+Notice `target="_blank"` which opens the linked document (i.e. /ourFriend) in a new window or tab.
+The Problem is that the destination page (i.e.. /ourFriend) has the ability to control the location of this page by modifying `window.opener.location`. It may leads to phishing attacks. 
+
+In our site we refer to /ourFriend page as friend web page that is trusted by us. but what if this page has been hacked recently and someone insert a malicious code in it, for example:
+
+` <script>`
+
+`     if (window.opener != null) {`
+
+`         window.opener.location.replace('https://www.hackerrank.com');`
+
+`     }`
+
+`  </script>`
+
+In this example the destination page attempts to modify the location of this page using `window.opener.location.replace('https://www.hackerrank.com');`
+
+### _how to fix it:_
+
+One of the solutions for this problem is to add an attribute `rel="noreferrer noopenner"` to the hyperlink element. In our example we need to modify it to be like this:
+
+` <li><a th:href="@{/ourFriend}" target="_blank" rel="noreferrer noopenner">Our Friend</a></li>`
+
+
+

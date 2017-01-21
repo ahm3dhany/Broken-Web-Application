@@ -110,3 +110,33 @@ SELECT id, content FROM Quotes [42102-193]
 2017-01-21 14:42:11 jdbc[4]: exception
 org.h2.jdbc.JdbcSQLException: Table "QUOTES" not found; SQL statement:
 SELECT id, content FROM Quotes [42102-193]
+2017-01-21 15:23:50 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 15:26:41 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 15:27:06 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 16:31:46 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 16:32:25 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
