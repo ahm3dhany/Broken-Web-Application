@@ -44,7 +44,9 @@
         <div class="container">
             <h4>Post a new quote:</h4>
             <form th:action="@{/quotes}" method="POST">
+                ID:
                 <input type="text" name="id"/>
+                Quote:
                 <input type="text" name="content"/>
                 <input type="submit" value="Post"/>
             </form>
