@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head lang="en">
+        <title>Admin Panel</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+        <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.4/css/bootstrap.min.css"
+              th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}"
+              rel="stylesheet" media="screen" />
+
+        <script src="http://cdn.jsdelivr.net/webjars/jquery/2.1.4/jquery.min.js"
+        th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+
+        <link href="../static/css/spring-core.css"
+              th:href="@{css/spring-core.css}" rel="stylesheet" media="screen"/>
+    </head>
+    <body>
+
+        <div class="container">
+            <header th:replace="fragments/header :: header">
+                <p>header with links etc</p>
+            </header>
+        </div>
+
+
+        <h1 align="center">Administrator Panel</h1>
+
+
+        <div class="container">
+            <div th:if="${not #lists.isEmpty(quotes)}">
+                <h3>Quotes</h3>
+                <table class="table table-striped">
+                    <tr>
+                        <th>Id</th>
+                        <th>Quote</th>
+                        <th><b>Remove</b></th>
+                    </tr>
+                    <tr th:each="quote: ${quotes}">
+
+                        <td th:text="${quote.id}"></td>
+
+                        <td th:text="${quote.content}"></td>
+                        <td>
+                            <form th:action="@{/admin/delete/quote/{id}(id=${quote.id})}" th:method="POST">
+                                <input type="submit" value="X"/>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <div class="container">
+            <div th:if="${not #lists.isEmpty(posts)}">
+                <h3>Six-Word Stories</h3>
+                <table class="table table-striped">
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Story</th>
+                        <th><b>Remove</b></th>
+                    </tr>
+                    <tr th:each="post: ${posts}">
+                        
+                        <td th:text="${posts.indexOf(post)+1}"></td>
+                        <td th:text="${post.title}"></td>
+                        <td th:text="${post.content}"></td>
+                        <td>
+                            <form th:action="@{/admin/delete/post/{id}(id=${posts.indexOf(post)+1})}" th:method="POST">
+                                <input type="submit" value="X"/>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+
+        </div>
+    </body>
+</html>

@@ -32,12 +32,4 @@ public class QuoteController {
         return "redirect:/quotes";
     }
     
-    @RequestMapping(value="/quotes/delete", method = RequestMethod.POST)
-    public String deleteQuote(@RequestParam String id) throws Exception {
-        
-        quoteService.deleteQuote(Integer.parseInt(id));
-        
-        return "redirect:/quotes";
-    }
-    
 }
