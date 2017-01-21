@@ -401,3 +401,63 @@ SELECT id, content FROM Quotes [42102-193]
 2017-01-21 22:41:27 jdbc[7]: exception
 org.h2.jdbc.JdbcSQLException: Table "QUOTES" not found; SQL statement:
 SELECT id, content FROM Quotes [42102-193]
+2017-01-21 23:11:19 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 23:14:32 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 23:15:43 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 23:15:58 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 23:41:39 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 23:42:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 23:47:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 23:47:48 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 23:52:31 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" not found; SQL statement:
+SELECT id, content FROM Quotes [42102-193]
+2017-01-21 23:52:34 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" not found; SQL statement:
+SELECT id, content FROM Quotes [42102-193]
+2017-01-21 23:52:43 jdbc[5]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" not found; SQL statement:
+SELECT id, content FROM Quotes [42102-193]
+2017-01-21 23:52:49 jdbc[6]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" not found; SQL statement:
+SELECT id, content FROM Quotes [42102-193]

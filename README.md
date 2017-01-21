@@ -190,3 +190,92 @@ So by including these dependencies, Spring by default prevent CSRF by adding a C
 `Invalid CSRF Token 'null' was found on the request parameter '_csrf' or header 'X-CSRF-TOKEN'.`
 
 Notice that if the application contains the security dependencies & the `@EnableWebSecurity` annotation and still has CSRF vulnerability, so probably your custom security configuration conatins this piece of code `http.csrf().disable()` which disable CSRF protection. So to activate the CSRF protection again you shoud delete this piece of code to return the default Spring security configuration.  
+
+## _Vulnerability:_ **A7-Missing Function Level Access Control**
+
+> Most web applications verify function level access rights before making that functionality visible in the UI. However, applications need to perform the same access control checks on the server when each function is accessed. If requests are not verified, attackers will be able to forge requests in order to access functionality without proper authorization.
+
+### _required steps to reproduce the vulnerability:_
+
+Even if the UI(i.e. User Interface) doesn't show navigation to the unauthorized "admin" page, the attacker can simply force the browser to target the "admin" page URL.
+In our case, if the attacker knows the URL of the "admin" page, he can just type http://localhost:8080/admin in the address bar of the browser and he is successfully navigated to the unauthorized page. The "admin" page allows whoever can access it to delete any story or quote.
+
+### _where the vulnerability came from:_
+
+Simply the application doesn't have RBAC (i.e. role-based access control) if we can say so.
+That is the application has nothing that prevent someone to access some resource based on his role(e.g. user, admin.. etc).
+Let's take a look at our custom security configuration:
+
+`@EnableWebSecurity`
+
+`public class SecurityConfig extends WebSecurityConfigurerAdapter {`
+    
+`    @Override`
+
+`    protected void configure(HttpSecurity http) throws Exception {`
+
+`        http`
+
+`                .authorizeRequests()`
+
+`                    .anyRequest().authenticated()`
+
+`                    .and()`
+
+`               .formLogin()`
+
+`               .and()`
+
+`               .csrf().disable();`
+                
+`   }`
+    
+`   @Autowired`
+
+`   public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {`
+        
+`       // In-memory Authentication: not Ideal for real world (In production use Bcrypt for example)       `        
+        
+`       auth`
+
+`               .inMemoryAuthentication()`
+
+`               .withUser("user").password("password").roles("USER")`
+
+`               .and()`
+
+`               .withUser("admin").password("test").roles("ADMIN");`
+        
+`    }`
+    
+`}`
+
+So even if our app offers some sort of authentication, but he doesn't offer authorization at all.
+
+### _how to fix it:_
+
+Modify the _configure()_ method in our custom security configuration class (i.e. _SecurityConfig_) to be like that:
+
+`@Override`
+
+`    protected void configure(HttpSecurity http) throws Exception {`
+
+`        http`
+
+`                .authorizeRequests()`
+
+`                    .antMatchers("/admin/**").hasRole("ADMIN")`
+
+`                    .anyRequest().authenticated()`
+
+`                    .and()`
+
+`                .formLogin()`
+
+`                .and()`
+
+`                .csrf().disable();`
+                
+`    }`
+
+The regex (i.e. regural expression) in the _antMatchers()_ matchs any URL that starts with "/admin/". These -who matches- will be restricted to users who have the role "ADMIN".
