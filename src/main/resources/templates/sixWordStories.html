@@ -30,12 +30,13 @@
                     <tr>
                         <th>#</th>
                         <th>Title</th>
-                        <th>Content</th>
+                        <th>Story</th>
                     </tr>
                     <tr th:each="post: ${posts}">
                         <td th:text="${posts.indexOf(post)+1}"></td>
                         <td th:text="${post.title}"></td>
-                        <!--  -->
+                        
+                        <!-- Cross-Site Scripting(XSS) Vulnerability -->
                         <td th:utext="${post.content}"></td>
                     </tr>
                 </table>
@@ -47,7 +48,9 @@
         <div class="container">
             <h4>Add your 6-word story</h4>
             <form th:action="@{/sixWordStories}" method="POST">
+                Title:
                 <input type="text" name="title"/>
+                Story:
                 <input type="text" name="content"/>
                 <input type="submit" value="Add"/>
             </form>
