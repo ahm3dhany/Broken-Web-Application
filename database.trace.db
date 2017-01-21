@@ -140,3 +140,87 @@ CREATE TABLE Quotes (
     id varchar(9) PRIMARY KEY,
     content varchar(300)
 ) [42101-193]
+2017-01-21 16:43:03 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 16:44:04 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 16:55:13 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 16:55:47 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 16:56:04 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 17:00:22 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 18:19:28 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 18:19:43 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 18:21:57 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 18:22:32 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 18:40:58 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 18:41:17 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 18:46:24 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]
+2017-01-21 18:46:49 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Table "QUOTES" already exists; SQL statement:
+CREATE TABLE Quotes (
+    id varchar(9) PRIMARY KEY,
+    content varchar(300)
+) [42101-193]

