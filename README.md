@@ -14,26 +14,27 @@ Spring Web-App that contains five different flaws -from the OWASP 2013 Top 10 Li
 4. You can see that new Story has been added and if you hover your mouse on it you got a Popup message-box that says "XSS".
 
 #### Identifying the vulnerability using _OWASP Zed Attack Proxy (ZAP):_
-1. Open the OWASP Zed Attack Proxy (ZAP), on the `quick start` tab type "http://localhost:8080" inside the `URL to attack` & click on `Attack`. You will notice that all requests refused by the server because you have to login first.So we will _fuzz_ the username & password.
+
+1. Open the OWASP Zed Attack Proxy (ZAP), on the `quick start` tab type "http://localhost:8080" inside the `URL to attack` & click on `Attack`. You will notice that all requests refused by the server because you have to login first. So we will _fuzz_ the username & password.
 2. Click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:login(password,submit,username)` and click `select`. Then highlight the value of the username parameter and add a file that contains most common usernames as a payload. Do the same for the value of the password parameter but this time with a file contains the most common passwords. Finally click on `Start Fuzzer`.
-![13_part1](screenshots/13_part1.png)
+![13_part1](screenshots/XSS/13_part1.png)
 3. After the fuzzing is completed, we need to search for something odd in the results. We notice that the size of the response header is the same for all requests except for two requests: the first request contains(user, password) as a payload, and the second contains(admin, test) as a payload. those are the right credentials we need.
-![14_part1](screenshots/14_part1.png)
+![14_part1](screenshots/XSS/14_part1.png)
 4. Create new context to add the credentials: click on `sites` then right click on `http://localhost:8080` > `Include in Context` > `New Context`.
-![15_part1](screenshots/15_part1.png)
+![15_part1](screenshots/XSS/15_part1.png)
 5. Choose `Authentication` and select `Form-based Authentication` from the drop-down list, Choose `http://localhost:8080/login` as the Login Form Target URL, then choose `username` as the username parameter & `password` as the password parameter.
-![18_part1](screenshots/18_part1.png)
+![18_part1](screenshots/XSS/18_part1.png)
 6. Choose `Users`, then click on `Add`, give an arbitrary name for `User Name` such as "Normal User", and type "user" as the `Username` & "password" as the `Password`, then click `OK`.
-![19_part1](screenshots/19_part1.png)
+![19_part1](screenshots/XSS/19_part1.png)
 7. Choose `Spider` and click on `New Scan` and choose `http://localhost:8080` as starting point, choose both the Context & the user you just created then click on `Start Scan`.
-![21_part1](screenshots/21_part1.png)
+![21_part1](screenshots/XSS/21_part1.png)
 8. You will notice that -unlike the first time which returned a login error page for every request- now the `Spider` can create a map of the application with all the points of access to the application (no not really! check the _Missing Function Level Access Control_ vulnerability section).
-![22_part1](screenshots/22_part1.png)
-9. Now click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:sixWordStories(content,title)` and click `select`. Then highlight the value of the content parameter and add a file fuzzer(XSS that contains [XSS101, XSS102 and XSS HTML Breaking]) as a payload. Finally click on `Start Fuzzer`.
-![26_part1](screenshots/26_part1.png)
+![22_part1](screenshots/XSS/22_part1.png)
+9. Now click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:sixWordStories(content,title)` and click `select`. Then highlight the value of the content parameter and add a `file fuzzer` (XSS that contains [XSS101, XSS102 and XSS HTML Breaking]) as a payload. Finally click on `Start Fuzzer`.
+![26_part1](screenshots/XSS/26_part1.png)
 10. After completion of the fuzzing process, navigate to `http://localhost:8080/sixWordStories` and you will notice pop-up messages and other thing that indicates XSS vulnerability.
-![31_part1](screenshots/31_part1.png)
-![32_part1](screenshots/32_part1.png)
+![31_part1](screenshots/XSS/31_part1.png)
+![32_part1](screenshots/XSS/32_part1.png)
 
 ### _where the vulnerability came from:_
 
@@ -58,6 +59,14 @@ Simply you can use `th:text` instead of `th:utext`. `th:text` is the default beh
 3. In the input field next to "Quote:", write:
   `take care'); DROP TABLE Quotes;--` and click on "Post".
 4. Now you are redirected to a page that tells you: `Table "QUOTES" not found;`, that's because  `DROP TABLE` statement removed the table.
+
+#### Identifying the vulnerability using _OWASP Zed Attack Proxy (ZAP):_
+
+1. Click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:quotes(content,id)` and click `select`. Then highlight the value of the id parameter and choose `Regex (*Experimental*)` from the drop-down list, then type `'\d'` in the `Regex` input field and type `10000` in the `Max Payloads` field and click `add` > `OK`.
+![2_part2](screenshots/SQLi/2_part2.png)
+2. Do the same for the value of the content parameter but this time with a `File Fuzzers` (SQL Injection that contains [Active SQL Injection & MySQL Injection 101]). Finally click on `Start Fuzzer`.
+![5_part2_b](screenshots/SQLi/5_part2_b.png)
+![8_part2_b](screenshots/SQLi/8_part2_b.png)
 
 ### _where the vulnerability came from:_
 
