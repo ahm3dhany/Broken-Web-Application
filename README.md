@@ -1,5 +1,24 @@
-# **broken-web-application**
-Spring Web-App that contains five different flaws -from the OWASP 2013 Top 10 List- and their fixes.
+# **broken-web-application** 
+ 
+Spring Web-Application that contains five different flaws -from the OWASP 2013 Top 10 List- and their fixes.
+
+## An Overview of Web Applications
+
+For the sake of simplicity, I stayed away from complex architecture and vague syntax. Simply the application has two main pages.. that is _/sixWordStories_ and _/quotes_. The former just contains short stories of 6 words only, and the latter contains some quotes.. Both has the ability to add new entries.
+
+## Prerequisites
+
+- JDK 1.8
+- Maven
+- OWASP Zed Attack Proxy (i.e. ZAP) [optional]
+- Netbeans (or another suitable IDE) if you are not comfortable with using the command line.
+
+## Setup
+
+1. _Clone_ the repository or _download the zip file_ of the repository and _import_ the project to your _IDE_.
+2. Build the Project using _Maven_, then Run it.
+
+IMPORTANT NOTE: the Wep Application contains _In-Memory_ Authentication just for the demonstration.. so I think it is not suitable for _production_.. In real-world you may use database and make sure that your password storage is not taken place as plain-text.. use a good _hash-algorithm_ (no Collisions).. having _salt_ with it (if not you may be vulnerable to _Rainbow Table Attacks_).. you may consider using Bcrypt (Spring offers BCryptPasswordEncoder).
 
 ## _Vulnerability:_ **A3-Cross-Site Scripting (XSS)**
 
@@ -47,60 +66,6 @@ here the "th:utext" (for "unescaped text") caused the XSS vulnerability, because
 ### _how to fix it:_
 
 Simply you can use `th:text` instead of `th:utext`. `th:text` is the default behaviour of "Thymeleaf" which makes sure that text should be escaped.
-
-## _Vulnerability:_ **A1-Injection**
-
-> Injection flaws, such as SQL, OS, and LDAP injection occur when untrusted data is sent to an interpreter as part of a command or query. The attacker’s hostile data can trick the interpreter into executing unintended commands or accessing data without proper authorization.
-
-### _required steps to reproduce the vulnerability:_
-
-1. Navigate to Quotes page (e.g. http://localhost:8080/quotes). And if you prompted for credentials type "user" as the username & "password" as the password.
-2. In the input field next to "ID:", type a numeric value (e.g. 15).
-3. In the input field next to "Quote:", write:
-  `take care'); DROP TABLE Quotes;--` and click on "Post".
-4. Now you are redirected to a page that tells you: `Table "QUOTES" not found;`, that's because  `DROP TABLE` statement removed the table.
-
-#### Identifying the vulnerability using _OWASP Zed Attack Proxy (ZAP):_
-
-(Notice that you can identify this vulnerability with _Burp Suite_ & _sqlmap_ as well).
-
-1. Click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:quotes(content,id)` and click `select`. Then highlight the value of the id parameter and choose `Regex (*Experimental*)` from the drop-down list, then type `'\d'` in the `Regex` input field and type `10000` in the `Max Payloads` field and click `add` > `OK`.
-![2_part2](screenshots/SQLi/2_part2.png)
-2. Do the same for the value of the content parameter but this time with a `File Fuzzers` (SQL Injection that contains [Active SQL Injection & MySQL Injection 101]). Finally click on `Start Fuzzer`.
-![5_part2_b](screenshots/SQLi/5_part2_b.png)
-![8_part2_b](screenshots/SQLi/8_part2_b.png)
-
-### _where the vulnerability came from:_
-
-In the _QuoteService_ class specifically in the _addQuote()_ method, we used the so called "Dynamic Queries" to concatenate data that is supplied by the user -who maybe is a potential attacker- to the query itself. Take a look at the vulnerable code:
-
-` String query = "INSERT INTO Quotes (id, content) VALUES ('" + quote.getId().toString() + "', '" + quote.getContent() + "')";`
-
-` Statement statement = connection.createStatement();`
-
-` statement.execute(query);`
-
-` statement.close();`
-
-After the Malicious Input is supplied (e.g. `15` & `take care'); DROP TABLE Quotes;--`), the query looks like this:
-
-` "INSERT INTO Quotes (id, content) VALUES ('15', 'take care'); DROP TABLE Quotes;--')"`
-
-### _how to fix it:_
-
-SQL injection attacks can be prevented very easy. In our example we'll use "Parameterized Queries". As I wrote my app with Java, I'll use "Prepared Statements". The SQL statement is precompiled and stored in a PreparedStatement object. In order to fix the vulnerability we have to substitute the vulnerable code with this safe code:
-
-` String query = "INSERT INTO Quotes (id, content) VALUES (?, ?)";`
-
-` PreparedStatement pstmt = connection.prepareStatement(query);`
-
-` pstmt.setInt(1, quote.getId());`
-
-` pstmt.setString(2, quote.getContent());`
-
-` pstmt.execute();`
-
-` pstmt.close();`
 
 ## _Vulnerability:_ **A10-Unvalidated Redirects and Forwards**
 
@@ -359,3 +324,57 @@ Modify the _configure()_ method in our custom security configuration class (i.e.
 `    }`
 
 The regex (i.e. regural expression) in the _antMatchers()_ matchs any URL that starts with "/admin/". These -who matches- will be restricted to users who have the role "ADMIN".
+
+## _Vulnerability:_ **A1-Injection**
+
+> Injection flaws, such as SQL, OS, and LDAP injection occur when untrusted data is sent to an interpreter as part of a command or query. The attacker’s hostile data can trick the interpreter into executing unintended commands or accessing data without proper authorization.
+
+### _required steps to reproduce the vulnerability:_
+
+1. Navigate to Quotes page (e.g. http://localhost:8080/quotes). And if you prompted for credentials type "user" as the username & "password" as the password.
+2. In the input field next to "ID:", type a numeric value (e.g. 15).
+3. In the input field next to "Quote:", write:
+  `take care'); DROP TABLE Quotes;--` and click on "Post".
+4. Now you are redirected to a page that tells you: `Table "QUOTES" not found;`, that's because  `DROP TABLE` statement removed the table.
+
+#### Identifying the vulnerability using _OWASP Zed Attack Proxy (ZAP):_
+
+(Notice that you can identify this vulnerability with _Burp Suite_ & _sqlmap_ as well).
+
+1. Click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:quotes(content,id)` and click `select`. Then highlight the value of the id parameter and choose `Regex (*Experimental*)` from the drop-down list, then type `'\d'` in the `Regex` input field and type `10000` in the `Max Payloads` field and click `add` > `OK`.
+![2_part2](screenshots/SQLi/2_part2.png)
+2. Do the same for the value of the content parameter but this time with a `File Fuzzers` (SQL Injection that contains [Active SQL Injection & MySQL Injection 101]). Finally click on `Start Fuzzer`.
+![5_part2_b](screenshots/SQLi/5_part2_b.png)
+![8_part2_b](screenshots/SQLi/8_part2_b.png)
+
+### _where the vulnerability came from:_
+
+In the _QuoteService_ class specifically in the _addQuote()_ method, we used the so called "Dynamic Queries" to concatenate data that is supplied by the user -who maybe is a potential attacker- to the query itself. Take a look at the vulnerable code:
+
+` String query = "INSERT INTO Quotes (id, content) VALUES ('" + quote.getId().toString() + "', '" + quote.getContent() + "')";`
+
+` Statement statement = connection.createStatement();`
+
+` statement.execute(query);`
+
+` statement.close();`
+
+After the Malicious Input is supplied (e.g. `15` & `take care'); DROP TABLE Quotes;--`), the query looks like this:
+
+` "INSERT INTO Quotes (id, content) VALUES ('15', 'take care'); DROP TABLE Quotes;--')"`
+
+### _how to fix it:_
+
+SQL injection attacks can be prevented very easy. In our example we'll use "Parameterized Queries". As I wrote my app with Java, I'll use "Prepared Statements". The SQL statement is precompiled and stored in a PreparedStatement object. In order to fix the vulnerability we have to substitute the vulnerable code with this safe code:
+
+` String query = "INSERT INTO Quotes (id, content) VALUES (?, ?)";`
+
+` PreparedStatement pstmt = connection.prepareStatement(query);`
+
+` pstmt.setInt(1, quote.getId());`
+
+` pstmt.setString(2, quote.getContent());`
+
+` pstmt.execute();`
+
+` pstmt.close();`
