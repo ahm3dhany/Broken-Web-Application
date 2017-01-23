@@ -18,7 +18,7 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
 1. _Clone_ the repository or _download the zip file_ of the repository and _import_ the project to your _IDE_.
 2. Build the Project using _Maven_, then Run it.
 
-IMPORTANT NOTE: the Wep Application contains _In-Memory_ Authentication just for the demonstration.. so I think it is not suitable for _production_.. In real-world you may use database and make sure that your password storage is not taken place as plain-text.. use a good _hash-algorithm_ (no Collisions).. having _salt_ with it (if not you may be vulnerable to _Rainbow Table Attacks_).. you may consider using Bcrypt (Spring offers BCryptPasswordEncoder).
+  IMPORTANT NOTE:  the Wep Application contains _In-Memory_ Authentication just for the demonstration.. so I think it is not suitable for _production_.. In real-world you may use database and make sure that your password storage is not taken place as plain-text.. use a good _hash-algorithm_ (no Collisions).. having _salt_ with it (if not you may be vulnerable to _Rainbow Table Attacks_).. you may consider using Bcrypt (Spring offers BCryptPasswordEncoder).
 
 ## _Vulnerability:_ **A3-Cross-Site Scripting (XSS)**
 
