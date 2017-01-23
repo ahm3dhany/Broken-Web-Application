@@ -28,7 +28,7 @@ Spring Web-App that contains five different flaws -from the OWASP 2013 Top 10 Li
 ![19_part1](screenshots/XSS/19_part1.png)
 7. Choose `Spider` and click on `New Scan` and choose `http://localhost:8080` as starting point, choose both the Context & the user you just created then click on `Start Scan`.
 ![21_part1](screenshots/XSS/21_part1.png)
-8. You will notice that -unlike the first time which returned a login error page for every request- now the `Spider` can create a map of the application with all the points of access to the application (no not really! check the _Missing Function Level Access Control_ vulnerability section).
+8. You will notice that -unlike the first time which returned a login error page for every request- the ZAP shows many pages. Now the `Spider` can create a map of the application with all the points of access to the application (no not really! check the _Missing Function Level Access Control_ vulnerability section).
 ![22_part1](screenshots/XSS/22_part1.png)
 9. Now click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:sixWordStories(content,title)` and click `select`. Then highlight the value of the content parameter and add a `file fuzzer` (XSS that contains [XSS101, XSS102 and XSS HTML Breaking]) as a payload. Finally click on `Start Fuzzer`.
 ![26_part1](screenshots/XSS/26_part1.png)
@@ -61,6 +61,8 @@ Simply you can use `th:text` instead of `th:utext`. `th:text` is the default beh
 4. Now you are redirected to a page that tells you: `Table "QUOTES" not found;`, that's because  `DROP TABLE` statement removed the table.
 
 #### Identifying the vulnerability using _OWASP Zed Attack Proxy (ZAP):_
+
+(Notice that you can identify this vulnerability with _Burp Suite_ & _sqlmap_ as well).
 
 1. Click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:quotes(content,id)` and click `select`. Then highlight the value of the id parameter and choose `Regex (*Experimental*)` from the drop-down list, then type `'\d'` in the `Regex` input field and type `10000` in the `Max Payloads` field and click `add` > `OK`.
 ![2_part2](screenshots/SQLi/2_part2.png)
@@ -237,6 +239,18 @@ In our case, if the attacker knows the URL of the "admin" page, he can just type
 1. Navigate to (http://localhost:8080/). And if you prompted for credentials type "user" as the username & "password" as the password.
 2. In in the address bar of your browser , force it to navigate to the admin page (i.e. http://localhost:8080/admin).
 3. Although you are logged in as a normal user, the "admin panel" page is shown and you can now delete any story or quote like if you are the administrator (some sort of privilege escalation).
+
+#### Identifying the vulnerability using _OWASP Zed Attack Proxy (ZAP):_
+
+(Notice that you can identify this vulnerability with _OWASP DirBuster_ as well).
+
+1. Complete the steps from 1 to 7 in the XSS section -if you didn't do it already-.
+2. Choose "Forced Browse":
+![4](screenshots/A7/4.png)
+3. Choose `localhost:8080` as the site and `directory-list-1.0.txt` as the list and start the forced browse..
+4. After a while -not too long-, one page will appear which didn't appear before in any spider crawling scan.. that is the admin page (http://localhost:8080/admin).
+![6](screenshots/A7/6.png)
+
 
 ### _where the vulnerability came from:_
 
