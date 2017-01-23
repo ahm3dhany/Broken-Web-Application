@@ -7,11 +7,33 @@ Spring Web-App that contains five different flaws -from the OWASP 2013 Top 10 Li
 
 ### _required steps to reproduce the vulnerability:_ 
 
-1. Navigate to Six-Word Sories page (e.g. http://localhost:8080/sixWordStories).
+1. Navigate to Six-Word Sories page (e.g. http://localhost:8080/sixWordStories). And if you prompted for credentials type "user" as the username & "password" as the password.
 2. Insert any text in the input field next to "Title:" (e.g. xss).
 3. In the input field next to "Story:", write: 
   `</noscript><br><code onmouseover=a=eval;b=alert;a(b(/XSS/.source));>MOVE MOUSE OVER THIS AREA</code>` and click on "Add". 
 4. You can see that new Story has been added and if you hover your mouse on it you got a Popup message-box that says "XSS".
+
+#### Identifying the vulnerability using _OWASP Zed Attack Proxy (ZAP):_
+1. Open the OWASP Zed Attack Proxy (ZAP), on the `quick start` tab type "http://localhost:8080" inside the `URL to attack` & click on `Attack`. You will notice that all requests refused by the server because you have to login first.So we will _fuzz_ the username & password.
+2. Click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:login(password,submit,username)` and click `select`. Then highlight the value of the username parameter and add a file that contains most common usernames as a payload. Do the same for the value of the password parameter but this time with a file contains the most common passwords. Finally click on `Start Fuzzer`.
+![13_part1](screenshots/13_part1.png)
+3. After the fuzzing is completed, we need to search for something odd in the results. We notice that the size of the response header is the same for all requests except for two requests: the first request contains(user, password) as a payload, and the second contains(admin, test) as a payload. those are the right credentials we need.
+![14_part1](screenshots/14_part1.png)
+4. Create new context to add the credentials: click on `sites` then right click on `http://localhost:8080` > `Include in Context` > `New Context`.
+![15_part1](screenshots/15_part1.png)
+5. Choose `Authentication` and select `Form-based Authentication` from the drop-down list, Choose `http://localhost:8080/login` as the Login Form Target URL, then choose `username` as the username parameter & `password` as the password parameter.
+![18_part1](screenshots/18_part1.png)
+6. Choose `Users`, then click on `Add`, give an arbitrary name for `User Name` such as "Normal User", and type "user" as the `Username` & "password" as the `Password`, then click `OK`.
+![19_part1](screenshots/19_part1.png)
+7. Choose `Spider` and click on `New Scan` and choose `http://localhost:8080` as starting point, choose both the Context & the user you just created then click on `Start Scan`.
+![21_part1](screenshots/21_part1.png)
+8. You will notice that -unlike the first time which returned a login error page for every request- now the `Spider` can create a map of the application with all the points of access to the application (no not really! check the _Missing Function Level Access Control_ vulnerability section).
+![22_part1](screenshots/22_part1.png)
+9. Now click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:sixWordStories(content,title)` and click `select`. Then highlight the value of the content parameter and add a file fuzzer(XSS that contains [XSS101, XSS102 and XSS HTML Breaking]) as a payload. Finally click on `Start Fuzzer`.
+![26_part1](screenshots/26_part1.png)
+10. After completion of the fuzzing process, navigate to `http://localhost:8080/sixWordStories` and you will notice pop-up messages and other thing that indicates XSS vulnerability.
+![31_part1](screenshots/31_part1.png)
+![32_part1](screenshots/32_part1.png)
 
 ### _where the vulnerability came from:_
 
@@ -31,11 +53,11 @@ Simply you can use `th:text` instead of `th:utext`. `th:text` is the default beh
 
 ### _required steps to reproduce the vulnerability:_
 
-1. Navigate to Quotes page (e.g. http://localhost:8080/quotes).
+1. Navigate to Quotes page (e.g. http://localhost:8080/quotes). And if you prompted for credentials type "user" as the username & "password" as the password.
 2. In the input field next to "ID:", type a numeric value (e.g. 15).
 3. In the input field next to "Quote:", write:
   `take care'); DROP TABLE Quotes;--` and click on "Post".
-4. Now you are redirected to a page that tells you: `Table "QUOTES" not found;`, that's because  DROP TABLE statement removed the table.
+4. Now you are redirected to a page that tells you: `Table "QUOTES" not found;`, that's because  `DROP TABLE` statement removed the table.
 
 ### _where the vulnerability came from:_
 
@@ -75,7 +97,7 @@ SQL injection attacks can be prevented very easy. In our example we'll use "Para
 
 ### _required steps to reproduce the vulnerability:_
 
-1. Navigate to either Six-Word Sories page (i.e. http://localhost:8080/sixWordStories) or Quotes page (i.e. http://localhost:8080/quotes).
+1. Navigate to either Six-Word Sories page (i.e. http://localhost:8080/sixWordStories) or Quotes page (i.e. http://localhost:8080/quotes). And if you prompted for credentials type "user" as the username & "password" as the password.
 2. At the top of the page, click on "Our Friend" link. It will open a new tab on your browser and display a page that tells you "If this vulnerability worked, your previous page is now redirected to www.hackerrank.com".
 3. Check your previous page now to make sure that the redirection happened.
 
@@ -114,9 +136,12 @@ One of the solutions for this problem is to add an attribute `rel="noreferrer no
 
 ### _required steps to reproduce the vulnerability:_
 
-1. In the Project folder (i.e. ../broken-web-application) there is a template called "csrf.html", open it on your browser (right click on "csrf.html" and choose "Open").
-2. The page contains a text "Want to win a lot of money with just ONE click!" and a button "Win Money!".. who doesn't want to win money! click on it.
-3. Navigate to "Quotes" page (i.e. http://localhost:8080/quotes), you will find that there is a new quote added with ID #99 and	Quote "Inappropriate text contains Profanity". So simple the csrf.html manipulated you with inserting a quote against your will.
+1. Navigate to "Quotes" page (i.e. http://localhost:8080/quotes). And if you prompted for credentials type "user" as the username & "password" as the password.
+2. In the Project folder (i.e. ../broken-web-application) there is a template called "csrf.html", open it on your browser (right click on "csrf.html" and choose "Open").
+
+  [IMPORTANT: open the "csrf.html" with the same browser you have logged in with]
+3. The page contains a text "Want to win a lot of money with just ONE click!" and a button "Win Money!".. who doesn't want to win money! click on it.
+4. Navigate to "Quotes" page (i.e. http://localhost:8080/quotes), you will find that there is a new quote added with ID #99 and	Quote "Inappropriate text contains Profanity". So simply the csrf.html manipulated you by inserting a quote against your will.
 
 ### _where the vulnerability came from:_
 
@@ -197,8 +222,12 @@ Notice that if the application contains the security dependencies & the `@Enable
 
 ### _required steps to reproduce the vulnerability:_
 
-Even if the UI(i.e. User Interface) doesn't show navigation to the unauthorized "admin" page, the attacker can simply force the browser to target the "admin" page URL.
+_Inception:_ Even if the UI(i.e. User Interface) doesn't show navigation to the unauthorized "admin" page, the attacker can simply force the browser to target the "admin" page URL.
 In our case, if the attacker knows the URL of the "admin" page, he can just type http://localhost:8080/admin in the address bar of the browser and he is successfully navigated to the unauthorized page. The "admin" page allows whoever can access it to delete any story or quote.
+
+1. Navigate to (http://localhost:8080/). And if you prompted for credentials type "user" as the username & "password" as the password.
+2. In in the address bar of your browser , force it to navigate to the admin page (i.e. http://localhost:8080/admin).
+3. Although you are logged in as a normal user, the "admin panel" page is shown and you can now delete any story or quote like if you are the administrator (some sort of privilege escalation).
 
 ### _where the vulnerability came from:_
 
