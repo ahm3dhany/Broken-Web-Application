@@ -1,6 +1,6 @@
 # **broken-web-application** 
  
-Spring Web-Application that contains five different flaws -from the OWASP 2013 Top 10 List- and their fixes.
+Spring Web-Application that contains six different flaws -from the [OWASP 2013 Top 10 List](https://www.owasp.org/index.php/Top_10_2013-Top_10)- and their fixes.
 
 ## An Overview of Web Applications
 
@@ -11,6 +11,8 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
 - JDK 1.8
 - Maven
 - OWASP Zed Attack Proxy (i.e. ZAP) [optional]
+- Wireshark [optional]
+- Fiddler [optionatl]
 - Netbeans (or another suitable IDE) if you are not comfortable with using the command line.
 
 ## Setup
@@ -28,8 +30,12 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
 
 1. Navigate to Six-Word Sories page (e.g. http://localhost:8080/sixWordStories). And if you prompted for credentials type "user" as the username & "password" as the password.
 2. Insert any text in the input field next to "Title:" (e.g. xss).
-3. In the input field next to "Story:", write: 
-  `</noscript><br><code onmouseover=a=eval;b=alert;a(b(/XSS/.source));>MOVE MOUSE OVER THIS AREA</code>` and click on "Add". 
+3. In the input field next to "Story:", write:
+
+  ```javascript
+  	</noscript><br><code onmouseover=a=eval;b=alert;a(b(/XSS/.source));>MOVE MOUSE OVER THIS AREA</code>
+  ```
+ and click on "Add".
 4. You can see that new Story has been added and if you hover your mouse on it you got a Popup message-box that says "XSS".
 
 #### Identifying the vulnerability using _OWASP Zed Attack Proxy (ZAP):_
@@ -59,8 +65,9 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
 
 First of all, We use "Thymeleaf" as our template engine. So in "sixWordStories.html", there is unescaped element in the template:
 
-`<td th:utext="${post.content}"></td>`
-
+```html
+	<td th:utext="${post.content}"></td>
+```
 here the "th:utext" (for "unescaped text") caused the XSS vulnerability, because it tells the "Thymeleaf" not to escape the text which may contain malicious javascript code.
 
 ### _how to fix it:_
@@ -81,30 +88,36 @@ Simply you can use `th:text` instead of `th:utext`. `th:text` is the default beh
 
 In "header.html" template, the "Our Friend" link is constructed using this piece of code:
 
-` <li><a th:href="@{/ourFriend}" target="_blank">Our Friend</a></li>`
+```html
+	<li><a th:href="@{/ourFriend}" target="_blank">Our Friend</a></li>
+```
 
 Notice `target="_blank"` which opens the linked document (i.e. /ourFriend) in a new window or tab.
 The Problem is that the destination page (i.e.. /ourFriend) has the ability to control the location of this page by modifying `window.opener.location`. It may leads to phishing attacks. 
 
 In our site we refer to /ourFriend page as friend web page that is trusted by us. but what if this page has been hacked recently and someone insert a malicious code in it, for example:
 
-` <script>`
+```javascript
+  <script>
+    if (window.opener != null) {
+    	window.opener.location.replace('https://www.hackerrank.com');
+    }
+  </script>
+```
 
-`     if (window.opener != null) {`
+In this example the destination page attempts to modify the location of this page using 
 
-`         window.opener.location.replace('https://www.hackerrank.com');`
-
-`     }`
-
-`  </script>`
-
-In this example the destination page attempts to modify the location of this page using `window.opener.location.replace('https://www.hackerrank.com');`
+```javascript
+	window.opener.location.replace('https://www.hackerrank.com');`
+```
 
 ### _how to fix it:_
 
 One of the solutions for this problem is to add an attribute `rel="noreferrer noopenner"` to the hyperlink element. In our example we need to modify it to be like this:
 
-` <li><a th:href="@{/ourFriend}" target="_blank" rel="noreferrer noopenner">Our Friend</a></li>`
+```html
+	<li><a th:href="@{/ourFriend}" target="_blank" rel="noreferrer noopenner">Our Friend</a></li>
+```
 
 ## _Vulnerability:_ **A8-Cross-Site Request Forgery (CSRF)**
 
@@ -123,97 +136,80 @@ One of the solutions for this problem is to add an attribute `rel="noreferrer no
 
 The malicious page (i.e. csrf.html) has a hidden form inside of it that will be submitted if you hit the "Win Money!" button. Take a look at the code:
 
+```html
+<form id="command" action="http://localhost:8080/quotes" method="post">
 
-` <form id="command" action="http://localhost:8080/quotes" method="post">`
+    <input type="hidden" name="id" value="99">
 
-`   <input type="hidden" name="id" value="99">`
+    <input type="hidden" name="content" value="Inappropriate text contains Profanity">
 
-`   <input type="hidden" name="content" value="Inappropriate text contains Profanity">`
+    <input value="Win Money!" type="submit">
 
-`   <input value="Win Money!" type="submit">`
-
-`</form>`
+</form>
+```
 
 Because you are currently authenticated by a cookie saved in your browser, the malicious page may send an HTTP request on your behalf to the site -which trusts you- and thereby causes an unwanted action Without your intention. Here the side effects may be posting text contains profanity which leads to ban you from the site. 
 
 It is also worth to mention that the malicious page could be implemented to be more tricky that you doesn't need to click on anything and the request will be sent as soon as you just open (i.e. load) the page.. here is an example:
 
-`<!DOCTYPE html>`
+```html
+<!DOCTYPE html>
+<html>
 
-`<html>`
+  <head>
+    <title>Win Money!</title>
+  </head>
 
-`  <head>`
+  <body onload="document.csrfForm.submit()">
+    <p>wasted!</p>
 
-`    <title>Win Money!</title>`
+    <form action="http://localhost:8080/quotes" method="POST" target="hiddenFrame" name="csrfForm">
+      <input type="hidden" name="id" value="97"/>
+      <input type="hidden" name="content" value="Another Inappropriate text that contains Profanity"/>
+    </form>
 
-`  </head>`
-
-`  <body onload="document.csrfForm.submit()">`
-
-`    <p>wasted!</p>`
-
-`    <form action="http://localhost:8080/quotes" method="POST" target="hiddenFrame" name="csrfForm">`
-
-`      <input type="hidden" name="id" value="97"/>`
-
-`      <input type="hidden" name="content" value="Another Inappropriate text that contains Profanity"/>`
-
-`    </form>`
-
-`    <iframe name="hiddenFrame" style="display: none;"></iframe>`
-
-`  </body>`
-
-`</html>`
-
+    <iframe name="hiddenFrame" style="display: none;"></iframe>
+  </body>
+  
+</html>
+```
 ### _how to fix it:_
 
 The problem with this vulnerability is that there is no difference between the HTTP request sent by the malicious page and the one that sent by you. So we need to add something to the HTTP request can't be supplied by the malicious site. So in order to complete the request the sender needs to provide the cookie and a token. Every time a request is sent, the server must compare the expected value of the Token with Token itself and if there is no match, the request will not be completed.
 
 So how we prevent CSRF in Spring?.. First we need to include the security dependencies in _pom.xml_: 
 
-`<dependency>`
-
-`                <groupId>org.springframework.security</groupId>`
-
-`                <artifactId>spring-security-web</artifactId>`
-
-`            </dependency>`
-
-`            <dependency>`
-
-`                <groupId>org.springframework.security</groupId>`
-
-`                <artifactId>spring-security-config</artifactId>`
-
-`            </dependency>`
+```xml
+  <dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-web</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-config</artifactId>
+  </dependency>
+```
 
 and Second we annotate our application with _@EnableWebSecurity_ annotation like that:
 
-`@EnableWebSecurity`
-
-`@SpringBootApplication`
-
-`public class BrokenWebApplication {`
-
-`	public static void main(String[] args) {`
-
-`		SpringApplication.run(BrokenWebApplication.class, args);`
-
-`	}`
-
-`}`
+```java
+  @EnableWebSecurity
+  @SpringBootApplication
+  public class BrokenWebApplication {
+    public static void main(String[] args) {
+      SpringApplication.run(BrokenWebApplication.class, args);
+    }
+  }
+```
 
 or if we already made a custom security configuration we can just annotate our custom security configuration class without annotation the application class like that:
 
-`@EnableWebSecurity`
-
-`public class SecurityConfig extends WebSecurityConfigurerAdapter {`
-	
-`    // Your Custom Security Configuration`
-    
-`}`
-
+```java
+  @EnableWebSecurity
+  public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    // Your Custom Security Configuration
+  }
+```
 
 So by including these dependencies, Spring by default prevent CSRF by adding a CSRF Token. So if you tried again to exploit this vulnurability it would fail and will got something like: 
 `Invalid CSRF Token 'null' was found on the request parameter '_csrf' or header 'X-CSRF-TOKEN'.`
@@ -251,49 +247,31 @@ Simply the application doesn't have RBAC (i.e. role-based access control) if we 
 That is the application has nothing that prevent someone to access some resource based on his role(e.g. user, admin.. etc).
 Let's take a look at our custom security configuration:
 
-`@EnableWebSecurity`
+```java
+  @EnableWebSecurity
+  public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+      http
+        .authorizeRequests()
+          .anyRequest().authenticated()
+          .and()
+        .formLogin()
+        .and()
+        .csrf().disable();            
+    }
 
-`public class SecurityConfig extends WebSecurityConfigurerAdapter {`
-    
-`    @Override`
-
-`    protected void configure(HttpSecurity http) throws Exception {`
-
-`        http`
-
-`                .authorizeRequests()`
-
-`                    .anyRequest().authenticated()`
-
-`                    .and()`
-
-`               .formLogin()`
-
-`               .and()`
-
-`               .csrf().disable();`
-                
-`   }`
-    
-`   @Autowired`
-
-`   public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {`
-        
-`       // In-memory Authentication: not Ideal for real world (In production use Bcrypt for example)       `        
-        
-`       auth`
-
-`               .inMemoryAuthentication()`
-
-`               .withUser("user").password("password").roles("USER")`
-
-`               .and()`
-
-`               .withUser("admin").password("test").roles("ADMIN");`
-        
-`    }`
-    
-`}`
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {        
+      // In-memory Authentication: not Ideal for real world (In production use Bcrypt for example)  
+      auth
+        .inMemoryAuthentication()
+        .withUser("user").password("password").roles("USER")
+        .and()
+        .withUser("admin").password("test").roles("ADMIN");        
+    }    
+  }
+```
 
 So even if our app offers some sort of authentication, but he doesn't offer authorization at all.
 
@@ -301,27 +279,19 @@ So even if our app offers some sort of authentication, but he doesn't offer auth
 
 Modify the _configure()_ method in our custom security configuration class (i.e. _SecurityConfig_) to be like that:
 
-`@Override`
-
-`    protected void configure(HttpSecurity http) throws Exception {`
-
-`        http`
-
-`                .authorizeRequests()`
-
-`                    .antMatchers("/admin/**").hasRole("ADMIN")`
-
-`                    .anyRequest().authenticated()`
-
-`                    .and()`
-
-`                .formLogin()`
-
-`                .and()`
-
-`                .csrf().disable();`
-                
-`    }`
+```java
+@Override
+  protected void configure(HttpSecurity http) throws Exception {
+    http
+      .authorizeRequests()
+        .antMatchers("/admin/**").hasRole("ADMIN")
+        .anyRequest().authenticated()
+        .and()
+      .formLogin()
+      .and()
+      .csrf().disable();             
+  }
+```
 
 The regex (i.e. regural expression) in the _antMatchers()_ matchs any URL that starts with "/admin/". These -who matches- will be restricted to users who have the role "ADMIN".
 
@@ -351,30 +321,188 @@ The regex (i.e. regural expression) in the _antMatchers()_ matchs any URL that s
 
 In the _QuoteService_ class specifically in the _addQuote()_ method, we used the so called "Dynamic Queries" to concatenate data that is supplied by the user -who maybe is a potential attacker- to the query itself. Take a look at the vulnerable code:
 
-` String query = "INSERT INTO Quotes (id, content) VALUES ('" + quote.getId().toString() + "', '" + quote.getContent() + "')";`
-
-` Statement statement = connection.createStatement();`
-
-` statement.execute(query);`
-
-` statement.close();`
+```java
+ String query = "INSERT INTO Quotes (id, content) VALUES ('" + quote.getId().toString() + "', '" + quote.getContent() + "')";
+ Statement statement = connection.createStatement();
+ statement.execute(query);
+ statement.close();
+```
 
 After the Malicious Input is supplied (e.g. `15` & `take care'); DROP TABLE Quotes;--`), the query looks like this:
 
-` "INSERT INTO Quotes (id, content) VALUES ('15', 'take care'); DROP TABLE Quotes;--')"`
+```sql
+ INSERT INTO Quotes (id, content) VALUES ('15', 'take care'); DROP TABLE Quotes;--')
+```
 
 ### _how to fix it:_
 
 SQL injection attacks can be prevented very easy. In our example we'll use "Parameterized Queries". As I wrote my app with Java, I'll use "Prepared Statements". The SQL statement is precompiled and stored in a PreparedStatement object. In order to fix the vulnerability we have to substitute the vulnerable code with this safe code:
 
-` String query = "INSERT INTO Quotes (id, content) VALUES (?, ?)";`
+```java
+ String query = "INSERT INTO Quotes (id, content) VALUES (?, ?)";
+ PreparedStatement pstmt = connection.prepareStatement(query);
+ pstmt.setInt(1, quote.getId());
+ pstmt.setString(2, quote.getContent());
+ pstmt.execute();
+ pstmt.close();
+```
 
-` PreparedStatement pstmt = connection.prepareStatement(query);`
+## _Vulnerability:_ **A6-Sensitive Data Exposure**
 
-` pstmt.setInt(1, quote.getId());`
+> Many web applications do not properly protect sensitive data, such as credit cards, tax IDs, and authentication credentials. Attackers may steal or modify such weakly protected data to conduct credit card fraud, identity theft, or other crimes. Sensitive data deserves extra protection such as encryption at rest or in transit, as well as special precautions when exchanged with the browser.
 
-` pstmt.setString(2, quote.getContent());`
+### _required steps to reproduce the vulnerability:_ 
 
-` pstmt.execute();`
+1. If you are already logged in, log out by clicking _Sign Out_. You will be redirected to the login page.
+2. Enter the credentials (i.e. type "user" as the username & "password" as the password).
+3. Now If you are connected to a Wireless Network & this web application are hosted on a real server or another host (i.e. you are connected to web-app via wireless network) then you just did send your sensitive data (credentials) in plain text format and somebody can view these by capturing or sniffing the network traffic from the air.
 
-` pstmt.close();`
+#### Identifying the vulnerability using _Fiddler:_
+
+In this section, I will demonstrate some sort of a Man in the middle (MITM) attack.
+We will use _Fiddler_ to capture HTTP traffic.
+
+1. If you are already logged in, log out by clicking _Sign Out_. You will be redirected to the login page.
+2. Open _Fiddler_.
+3. Now go back to you browser and enter the credentials (i.e. type "user" as the username & "password" as the password).
+4. Go back to _Fiddler_ and look up for the _post http_ request you just made, click on it.. then click on `Inspector` then click on either `TextView` or `WebForms`. You will see that the credentials sent in plain-text:
+![1](screenshots/A6/Fiddler_1.png)
+![2](screenshots/A6/Fiddler_2.png)
+
+#### Identifying the vulnerability using _Wireshark:_
+
+In this section, I will demonstrate some sort of a Man in the middle (MITM) attack.
+We will use _Wireshark_ to capture HTTP traffic. 
+
+Now the problem with _Wireshark_ is that you can't capture the loopback interface on Windows:
+
+  > If you are trying to capture traffic from a machine to itself, that traffic will not be sent over a real network interface, even if it's being sent to an address on one of the machine's network adapters. This means that you will not see it if you are trying to capture on, for example, the interface device for the adapter to which the destination address is assigned. You will only see it if you capture on the "loopback interface", if there is such an interface and it is possible to capture on it; see the next section for information on the platforms on which you can capture on the "loopback interface".
+
+So if your OS (i.e. Operating System) is Windows do these steps (Otherwise skip to step 2):
+
+1. Now normally if you install _Wireshark_, you will prompted to install _WinPcap_ too. Here, after you done the _Wireshark_ installation, install _Npcap_ (which is an update _of WinPcap_) and make sure that you've selected "` Support loopback traffic ("Npcap Loopback Adapter" will be created) `" option. The benefit of _Npcap_ here that it will create an `Npcap Loopback Adapter` that can be selected in Wireshark in order to capture IPv4/IPv6 loopback traffic. 
+  
+  > WinPcap is the Windows version of the libpcap library; it includes a driver to support capturing packets. Wireshark uses this library to capture live network data on Windows.
+
+2. If you are already logged in, log out by clicking _Sign Out_. You will be redirected to the login page.
+3. Open _Wireshark_. If you are in Windows, double click on `Npcap Loopback Adapter` (Otherwise double click on `Loopback: lo`).
+4. Now go back to you browser and enter the credentials (i.e. type "user" as the username & "password" as the password).
+5. Go back to _Wireshark_ and look up for the _post http_ request you just made, click on it. You will see that the credentials sent in plain-text:
+![1](screenshots/A6/Wireshark_1.png)
+
+### _where the vulnerability came from:_
+
+Even if we encrypt the credentials in our database (using Bcrypt for example),  the data is transmitted in clear text from client(browser) to server(webserver).
+We saw earlier that in that case if somebody is able to capture network traffic then he can look up for that information easily. 
+![before_1](screenshots/A6/before_1.png)
+
+### _how to fix it:_
+
+1. Genarate a `Self Signed Certificate`: As we are just testing our application, we don't bother purchasing a trusted certificate. So we will generate our own certificate. 
+
+  We already have the JDK installed, so the Java `keytool` comes in handy:
+
+  ![certGeneration](screenshots/A6/certGeneration.png)
+
+  Next we'll copy the certificate: 
+
+  ![certFile](screenshots/A6/certFile.png)
+
+  to the classpath (i.e. our project folder "../broken-web-application/").
+
+2. Normaly when you run the application, `Tomcat` listens for `HTTP` on port 8080:
+
+  ![INFO_1](screenshots/A6/INFO_1.png)
+
+  in order to configure our Tomcat to listen for `HTTPS` on port 8443, add these lines to `application.properties` file:
+
+  ```
+    server.port: 8443
+    server.ssl.key-store: Certificate.p12
+    server.ssl.key-store-password: UuHh$3
+    server.ssl.keyStoreType: PKCS12
+    server.ssl.keyAlias: tomcat
+  ```
+ 
+3. Run the application.. 
+
+  ![INFO_2](screenshots/A6/INFO_2.png)
+
+  Now go to your browser & navigate to "http**s**://localhost:**8443**".. this page will appear:
+
+  ![after_1](screenshots/A6/after_1.png)
+
+  what happened here is that the browser compared our generated certificate against some sort of white-list certificates and didn't find it there and that's OK. Actually _firefox_ show us more explanatory message:
+
+  ![fox_1](screenshots/A6/fox_1.png)
+
+  So we need to get rid of this message because we trust the certificate we just generated.. on _Chrome_ click on `Advanced` > `Proceed to localhost (unsafe)` and on _firefox_ click on `Add Exception` > `Confirm Security Exception`.
+
+  ![after_2](screenshots/A6/after_2.png)
+  ![fox_2](screenshots/A6/fox_2.png)
+  ![fox_3](screenshots/A6/fox_3.png)
+
+4. There is another problem.. try to navigate to "http://localhost:8443" and this message will appear:
+
+  ![noData](screenshots/A6/noData.png)
+
+  the problem that we have one _Tomcat Connector_ that listens for HTTPS request.. we need to add another one to redirect the HTTP requests to HTTPS. Unfortunately _Spring Boot_ doesn't support multiple connectors to be configured in `application.properties` file.. so we need to configure the HTTP connector programmatically.
+ 
+  Create new _class_ `TwoConnectors` under `broken.config` package:
+  (Note: these code is written by [_Driss Amri_](https://drissamri.be/blog/java/enable-https-in-spring-boot/))
+   
+  ```java
+  /**
+  * Support HTTP programmatically after 
+  * configuring HTTPS connector via application.properties
+  */
+  package broken.config;
+
+  import org.apache.catalina.Context;
+  import org.apache.catalina.connector.Connector;
+  import org.apache.tomcat.util.descriptor.web.SecurityCollection;
+  import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
+  import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
+  import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+  import org.springframework.context.annotation.Bean;
+  import org.springframework.context.annotation.Configuration;
+
+  @Configuration
+  public class TwoConnectors {
+
+    @Bean
+    public EmbeddedServletContainerFactory servletContainer() {
+      TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory() {
+        @Override
+        protected void postProcessContext(Context context) {
+        SecurityConstraint securityConstraint = new SecurityConstraint();
+        securityConstraint.setUserConstraint("CONFIDENTIAL");
+        SecurityCollection collection = new SecurityCollection();
+        collection.addPattern("/*");
+        securityConstraint.addCollection(collection);
+        context.addConstraint(securityConstraint);
+      }
+    };
+
+      tomcat.addAdditionalTomcatConnectors(initiateHttpConnector());
+      return tomcat;
+    }
+
+    private Connector initiateHttpConnector() {
+      Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
+      connector.setScheme("http");
+      connector.setPort(8080);
+      connector.setSecure(false);
+      connector.setRedirectPort(8443);
+
+      return connector;
+    }
+
+  }
+  ```
+
+5. "Clean & Build" the project then run it.. you will see that _Tomcat_ handles both HTTPS & HTTP:
+
+  ![INFO_3](screenshots/A6/INFO_3.png)
+  
+  You can verify that both are working by navigating to "http://localhost:8080" & "https://localhost:8443" via your browser.
