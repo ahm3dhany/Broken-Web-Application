@@ -271,9 +271,9 @@ In our case, if the attacker knows the URL of the "admin" page, he can just type
 
 #### Identifying the vulnerability using _DIRB:_
 
-  > DIRB is a Web Content Scanner. It looks for existing (and/or hidden) Web 
-Objects. It basically works by launching a dictionary based attack against 
-a web server and analizing the response.
+    > DIRB is a Web Content Scanner. It looks for existing (and/or hidden) Web 
+  Objects. It basically works by launching a dictionary based attack against 
+  a web server and analizing the response.
 
 1. We'll start by scanning our web-app content:
 
@@ -286,7 +286,7 @@ a web server and analizing the response.
       	.anyRequest().authenticated()
   ```
   
-2. We want to provide DIRB with the credentials.. in order to do that go to you browser.. and login as regural user ("user" as the username & "password" as the password).. open the `developer tools` > `Network` and copy the cookie (i.e. _JSESSIONID_):
+2. We want to provide DIRB with the credentials.. in order to do so go to you browser.. and login as regural user ("user" as the username & "password" as the password).. open the `developer tools` > `Network` and copy the cookie (i.e. _JSESSIONID_):
 
   ![dirb_2](screenshots/A6/dirb_2.png)
 
@@ -294,7 +294,7 @@ a web server and analizing the response.
 
   ![dirb_3](screenshots/A6/dirb_3.png)  
   
-  we can see clearly that DIRB discovered the hidden web page (i.e. /admin) easily.
+  we can see clearly that DIRB has discovered the hidden web page (i.e. /admin) easily.
   
 ### _where the vulnerability came from:_
 
