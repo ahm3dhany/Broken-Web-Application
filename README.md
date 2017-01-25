@@ -12,7 +12,8 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
 - Maven
 - OWASP Zed Attack Proxy (i.e. ZAP) [optional]
 - Wireshark [optional]
-- Fiddler [optionatl]
+- Fiddler [optional]
+- Ettercap [optional]
 - Netbeans (or another suitable IDE) if you are not comfortable with using the command line.
 
 ## Setup
@@ -41,33 +42,52 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
 #### Identifying the vulnerability using _OWASP Zed Attack Proxy (ZAP):_
 
 1. Open the OWASP Zed Attack Proxy (ZAP), on the `quick start` tab type "http://localhost:8080" inside the `URL to attack` & click on `Attack`. You will notice that all requests refused by the server because you have to login first. So we will _fuzz_ the username & password.
+
 2. Click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:login(password,submit,username)` and click `select`. Then highlight the value of the username parameter and add a file that contains most common usernames as a payload. Do the same for the value of the password parameter but this time with a file contains the most common passwords. Finally click on `Start Fuzzer`.
-![13_part1](screenshots/XSS/13_part1.png)
+  
+  ![13_part1](screenshots/XSS/13_part1.png)
+  
 3. After the fuzzing is completed, we need to search for something odd in the results. We notice that the size of the response header is the same for all requests except for two requests: the first request contains(user, password) as a payload, and the second contains(admin, test) as a payload. those are the right credentials we need.
-![14_part1](screenshots/XSS/14_part1.png)
+
+  ![14_part1](screenshots/XSS/14_part1.png)
+  
 4. Create new context to add the credentials: click on `sites` then right click on `http://localhost:8080` > `Include in Context` > `New Context`.
-![15_part1](screenshots/XSS/15_part1.png)
+
+  ![15_part1](screenshots/XSS/15_part1.png)
+  
 5. Choose `Authentication` and select `Form-based Authentication` from the drop-down list, Choose `http://localhost:8080/login` as the Login Form Target URL, then choose `username` as the username parameter & `password` as the password parameter.
-![18_part1](screenshots/XSS/18_part1.png)
+
+  ![18_part1](screenshots/XSS/18_part1.png)
+
 6. Choose `Users`, then click on `Add`, give an arbitrary name for `User Name` such as "Normal User", and type "user" as the `Username` & "password" as the `Password`, then click `OK`.
-![19_part1](screenshots/XSS/19_part1.png)
+
+  ![19_part1](screenshots/XSS/19_part1.png)
+  
 7. Choose `Spider` and click on `New Scan` and choose `http://localhost:8080` as starting point, choose both the Context & the user you just created then click on `Start Scan`.
-![21_part1](screenshots/XSS/21_part1.png)
+  
+  ![21_part1](screenshots/XSS/21_part1.png)
+  
 8. You will notice that -unlike the first time which returned a login error page for every request- the ZAP shows many pages. Now the `Spider` can create a map of the application with all the points of access to the application (no not really! check the _Missing Function Level Access Control_ vulnerability section).
-![22_part1](screenshots/XSS/22_part1.png)
+
+  ![22_part1](screenshots/XSS/22_part1.png)
+  
 9. Now click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:sixWordStories(content,title)` and click `select`. Then highlight the value of the content parameter and add a `file fuzzer` (XSS that contains [XSS101, XSS102 and XSS HTML Breaking]) as a payload. Finally click on `Start Fuzzer`.
-![26_part1](screenshots/XSS/26_part1.png)
+
+  ![26_part1](screenshots/XSS/26_part1.png)
+  
 10. After completion of the fuzzing process, navigate to `http://localhost:8080/sixWordStories` and you will notice pop-up messages and other thing that indicates XSS vulnerability.
-![31_part1](screenshots/XSS/31_part1.png)
-![32_part1](screenshots/XSS/32_part1.png)
+
+  ![31_part1](screenshots/XSS/31_part1.png)
+  ![32_part1](screenshots/XSS/32_part1.png)
 
 ### _where the vulnerability came from:_
 
 First of all, We use "Thymeleaf" as our template engine. So in "sixWordStories.html", there is unescaped element in the template:
 
-```html
-	<td th:utext="${post.content}"></td>
-```
+  ```html
+      <td th:utext="${post.content}"></td>
+  ```
+  
 here the "th:utext" (for "unescaped text") caused the XSS vulnerability, because it tells the "Thymeleaf" not to escape the text which may contain malicious javascript code.
 
 ### _how to fix it:_
@@ -76,52 +96,54 @@ Simply you can use `th:text` instead of `th:utext`. `th:text` is the default beh
 
 ## _Vulnerability:_ **A10-Unvalidated Redirects and Forwards**
 
-> Web applications frequently redirect and forward users to other pages and websites, and use untrusted data to determine the destination pages. Without proper validation, attackers can redirect victims to phishing or malware sites, or use forwards to access unauthorized pages.
+  > Web applications frequently redirect and forward users to other pages and websites, and use untrusted data to determine the destination pages. Without proper validation, attackers can redirect victims to phishing or malware sites, or use forwards to access unauthorized pages.
 
 ### _required steps to reproduce the vulnerability:_
 
 1. Navigate to either Six-Word Sories page (i.e. http://localhost:8080/sixWordStories) or Quotes page (i.e. http://localhost:8080/quotes). And if you prompted for credentials type "user" as the username & "password" as the password.
+
 2. At the top of the page, click on "Our Friend" link. It will open a new tab on your browser and display a page that tells you "If this vulnerability worked, your previous page is now redirected to www.hackerrank.com".
+
 3. Check your previous page now to make sure that the redirection happened.
 
 ### _where the vulnerability came from:_
 
 In "header.html" template, the "Our Friend" link is constructed using this piece of code:
 
-```html
-	<li><a th:href="@{/ourFriend}" target="_blank">Our Friend</a></li>
-```
+  ```html
+      <li><a th:href="@{/ourFriend}" target="_blank">Our Friend</a></li>
+  ```
 
 Notice `target="_blank"` which opens the linked document (i.e. /ourFriend) in a new window or tab.
 The Problem is that the destination page (i.e.. /ourFriend) has the ability to control the location of this page by modifying `window.opener.location`. It may leads to phishing attacks. 
 
 In our site we refer to /ourFriend page as friend web page that is trusted by us. but what if this page has been hacked recently and someone insert a malicious code in it, for example:
 
-```javascript
-  <script>
-    if (window.opener != null) {
-    	window.opener.location.replace('https://www.hackerrank.com');
-    }
-  </script>
-```
+  ```javascript
+    <script>
+      if (window.opener != null) {
+          window.opener.location.replace('https://www.hackerrank.com');
+      }
+    </script>
+  ```
 
 In this example the destination page attempts to modify the location of this page using 
 
-```javascript
-	window.opener.location.replace('https://www.hackerrank.com');`
-```
+  ```javascript
+      window.opener.location.replace('https://www.hackerrank.com');`
+  ```
 
 ### _how to fix it:_
 
 One of the solutions for this problem is to add an attribute `rel="noreferrer noopenner"` to the hyperlink element. In our example we need to modify it to be like this:
 
-```html
-	<li><a th:href="@{/ourFriend}" target="_blank" rel="noreferrer noopenner">Our Friend</a></li>
-```
+  ```html
+      <li><a th:href="@{/ourFriend}" target="_blank" rel="noreferrer noopenner">Our Friend</a></li>
+  ```
 
 ## _Vulnerability:_ **A8-Cross-Site Request Forgery (CSRF)**
 
-> A CSRF attack forces a logged-on victim’s browser to send a forged HTTP request, including the victim’s session cookie and any other automatically included authentication information, to a vulnerable web application. This allows the attacker to force the victim’s browser to generate requests the vulnerable application thinks are legitimate requests from the victim.
+  > A CSRF attack forces a logged-on victim’s browser to send a forged HTTP request, including the victim’s session cookie and any other automatically included authentication information, to a vulnerable web application. This allows the attacker to force the victim’s browser to generate requests the vulnerable application thinks are legitimate requests from the victim.
 
 ### _required steps to reproduce the vulnerability:_
 
@@ -226,7 +248,9 @@ _Inception:_ Even if the UI(i.e. User Interface) doesn't show navigation to the 
 In our case, if the attacker knows the URL of the "admin" page, he can just type http://localhost:8080/admin in the address bar of the browser and he is successfully navigated to the unauthorized page. The "admin" page allows whoever can access it to delete any story or quote.
 
 1. Navigate to (http://localhost:8080/). And if you prompted for credentials type "user" as the username & "password" as the password.
+
 2. In in the address bar of your browser , force it to navigate to the admin page (i.e. http://localhost:8080/admin).
+
 3. Although you are logged in as a normal user, the "admin panel" page is shown and you can now delete any story or quote like if you are the administrator (some sort of privilege escalation).
 
 #### Identifying the vulnerability using _OWASP Zed Attack Proxy (ZAP):_
@@ -234,11 +258,16 @@ In our case, if the attacker knows the URL of the "admin" page, he can just type
 (Notice that you can identify this vulnerability with _OWASP DirBuster_ as well).
 
 1. Complete the steps from 1 to 7 in the XSS section -if you didn't do it already-.
+
 2. Choose "Forced Browse":
-![4](screenshots/A7/4.png)
+
+  ![4](screenshots/A7/4.png)
+  
 3. Choose `localhost:8080` as the site and `directory-list-1.0.txt` as the list and start the forced browse..
-4. After a while -not too long-, one page will appear which didn't appear before in any spider crawling scan.. that is the admin page (http://localhost:8080/admin).
-![6](screenshots/A7/6.png)
+
+4. After a while -not too long-, one page will appears which didn't appear before in any spider crawling scan.. that is the admin page (http://localhost:8080/admin).
+
+  ![6](screenshots/A7/6.png)
 
 
 ### _where the vulnerability came from:_
@@ -312,10 +341,12 @@ The regex (i.e. regural expression) in the _antMatchers()_ matchs any URL that s
 (Notice that you can identify this vulnerability with _Burp Suite_ & _sqlmap_ as well).
 
 1. Click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:quotes(content,id)` and click `select`. Then highlight the value of the id parameter and choose `Regex (*Experimental*)` from the drop-down list, then type `'\d'` in the `Regex` input field and type `10000` in the `Max Payloads` field and click `add` > `OK`.
-![2_part2](screenshots/SQLi/2_part2.png)
+
+  ![2_part2](screenshots/SQLi/2_part2.png)
 2. Do the same for the value of the content parameter but this time with a `File Fuzzers` (SQL Injection that contains [Active SQL Injection & MySQL Injection 101]). Finally click on `Start Fuzzer`.
-![5_part2_b](screenshots/SQLi/5_part2_b.png)
-![8_part2_b](screenshots/SQLi/8_part2_b.png)
+
+  ![5_part2_b](screenshots/SQLi/5_part2_b.png)
+  ![8_part2_b](screenshots/SQLi/8_part2_b.png)
 
 ### _where the vulnerability came from:_
 
@@ -363,11 +394,15 @@ In this section, I will demonstrate some sort of a Man in the middle (MITM) atta
 We will use _Fiddler_ to capture HTTP traffic.
 
 1. If you are already logged in, log out by clicking _Sign Out_. You will be redirected to the login page.
+
 2. Open _Fiddler_.
+
 3. Now go back to you browser and enter the credentials (i.e. type "user" as the username & "password" as the password).
+
 4. Go back to _Fiddler_ and look up for the _http post_ request you just made, click on it.. then click on `Inspector` then click on either `TextView` or `WebForms`. You will see that the credentials sent in plain-text:
-![1](screenshots/A6/Fiddler_1.png)
-![2](screenshots/A6/Fiddler_2.png)
+
+  ![1](screenshots/A6/Fiddler_1.png)
+  ![2](screenshots/A6/Fiddler_2.png)
 
 #### Identifying the vulnerability using _Wireshark:_
 
@@ -385,10 +420,14 @@ So if your OS (i.e. Operating System) is Windows do these steps (Otherwise skip 
   > WinPcap is the Windows version of the libpcap library; it includes a driver to support capturing packets. Wireshark uses this library to capture live network data on Windows.
 
 2. If you are already logged in, log out by clicking _Sign Out_. You will be redirected to the login page.
+
 3. Open _Wireshark_. If you are in Windows, double click on `Npcap Loopback Adapter` (Otherwise double click on `Loopback: lo`).
+
 4. Now go back to you browser and enter the credentials (i.e. type "user" as the username & "password" as the password).
+
 5. Go back to _Wireshark_ and look up for the _post http_ request you just made, click on it. You will see that the credentials sent in plain-text:
-![1](screenshots/A6/Wireshark_1.png)
+
+  ![1](screenshots/A6/Wireshark_1.png)
 
 #### Identifying the vulnerability using _Ettercap:_
 
@@ -396,6 +435,7 @@ In this section, I will demonstrate some sort of a Man in the middle (MITM) atta
 We will use _Ettercap_ to capture HTTP traffic.
 
 1. If you are already logged in, log out by clicking _Sign Out_. You will be redirected to the login page.
+
 2. Open _Ettercap_. Click on `Sniff` > `Unified Sniffing`:
 
   ![Ettercap_1](screenshots/A6/Ettercap_1.png)
@@ -405,6 +445,7 @@ We will use _Ettercap_ to capture HTTP traffic.
   ![Ettercap_2](screenshots/A6/Ettercap_2.png)
   
 4. Go back to you browser and enter the credentials (i.e. type "user" as the username & "password" as the password).
+
 5. Now go back to _Ettercap_ and look up for the _http_ request you just made, You will see that the credentials sent in plain-text:
 
   ![Ettercap_3](screenshots/A6/Ettercap_3.png)
@@ -413,7 +454,8 @@ We will use _Ettercap_ to capture HTTP traffic.
 
 Even if we encrypt the credentials in our database (using Bcrypt for example),  the data is transmitted in clear text from client(browser) to server(webserver).
 We saw earlier that in that case if somebody is able to capture network traffic then he can look up for that information easily. 
-![before_1](screenshots/A6/before_1.png)
+
+  ![before_1](screenshots/A6/before_1.png)
 
 ### _how to fix it:_
 
