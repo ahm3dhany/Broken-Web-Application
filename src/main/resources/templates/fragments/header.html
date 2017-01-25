@@ -1,20 +1,25 @@
 <!DOCTYPE HTML>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
     <head>
         <meta charset="UTF-8" />
         <title>Header template</title>
     </head>
     <body>
-
+        <header th:fragment="header">
+            <h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+            <form th:action="@{/logout}" method="post">
+                <input type="submit" value="Sign Out"/>
+            </form>
+        </header>
 
         <header th:fragment="header">
             <ul>
                 <li><a th:href="@{/sixWordStories}">Six Word Stories</a></li>
                 <li><a th:href="@{/quotes}">Quotes</a></li>
-                
+
                 <!-- A10-Unvalidated Redirects and Forwards Vulnerability -->
                 <li><a th:href="@{/ourFriend}" target="_blank">Our Friend</a></li>
-                
+
                 <!-- A10-Unvalidated Redirects and Forwards Fix -->
                 <!-- <li><a th:href="@{/ourFriend}" target="_blank" rel="noreferrer noopenner">Our Friend</a></li> -->
             </ul>
