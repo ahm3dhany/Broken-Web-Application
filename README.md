@@ -277,7 +277,7 @@ a web server and analizing the response.
 
 1. We'll start by scanning our web-app content:
 
-  ![dirb_1](screenshots/A7/dirb_1.png)
+  ![dirb_1](screenshots/A6/dirb_1.png)
   
   DIRB found only 2 results.. that is because our security configuration requires any request to be authenticated:
   ```java
@@ -288,11 +288,11 @@ a web server and analizing the response.
   
 2. We want to provide DIRB with the credentials.. in order to do that go to you browser.. and login as regural user ("user" as the username & "password" as the password).. open the `developer tools` > `Network` and copy the cookie (i.e. _JSESSIONID_):
 
-  ![dirb_2](screenshots/A7/dirb_2.png)
+  ![dirb_2](screenshots/A6/dirb_2.png)
 
 3. Now run the DIRB scan again, but this time we'll set the cookie:
 
-  ![dirb_3](screenshots/A7/dirb_3.png)  
+  ![dirb_3](screenshots/A6/dirb_3.png)  
   
   we can see clearly that DIRB discovered the hidden web page (i.e. /admin) easily.
   
