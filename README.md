@@ -269,7 +269,33 @@ In our case, if the attacker knows the URL of the "admin" page, he can just type
 
   ![6](screenshots/A7/6.png)
 
+#### Identifying the vulnerability using _DIRB:_
 
+  > DIRB is a Web Content Scanner. It looks for existing (and/or hidden) Web 
+Objects. It basically works by launching a dictionary based attack against 
+a web server and analizing the response.
+
+1. We'll start by scanning our web-app content:
+
+  ![dirb_1](screenshots/A7/dirb_1.png)
+  
+  DIRB found only 2 results.. that is because our security configuration requires any request to be authenticated:
+  ```java
+    http
+      .authorizeRequests()
+      	.anyRequest().authenticated()
+  ```
+  
+2. We want to provide DIRB with the credentials.. in order to do that go to you browser.. and login as regural user ("user" as the username & "password" as the password).. open the `developer tools` > `Network` and copy the cookie (i.e. _JSESSIONID_):
+
+  ![dirb_2](screenshots/A7/dirb_2.png)
+
+3. Now run the DIRB scan again, but this time we'll set the cookie:
+
+  ![dirb_3](screenshots/A7/dirb_3.png)  
+  
+  we can see clearly that DIRB discovered the hidden web page (i.e. /admin) easily.
+  
 ### _where the vulnerability came from:_
 
 Simply the application doesn't have RBAC (i.e. role-based access control) if we can say so.
