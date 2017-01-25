@@ -390,6 +390,25 @@ So if your OS (i.e. Operating System) is Windows do these steps (Otherwise skip 
 5. Go back to _Wireshark_ and look up for the _post http_ request you just made, click on it. You will see that the credentials sent in plain-text:
 ![1](screenshots/A6/Wireshark_1.png)
 
+#### Identifying the vulnerability using _Ettercap:_
+
+In this section, I will demonstrate some sort of a Man in the middle (MITM) attack.
+We will use _Ettercap_ to capture HTTP traffic.
+
+1. If you are already logged in, log out by clicking _Sign Out_. You will be redirected to the login page.
+2. Open _Ettercap_. Click on `Sniff` > `Unified Sniffing`:
+
+  ![Ettercap_1](screenshots/A6/Ettercap_1.png)
+  
+3. If you are running the wep-application on the same machine choose `Local Loopback`. If it's running on another machine or you are using the _Ettercap_ from a virtual machine (e.g. Kali Linux) choose `eth0`:
+
+  ![Ettercap_2](screenshots/A6/Ettercap_2.png)
+  
+4. Go back to you browser and enter the credentials (i.e. type "user" as the username & "password" as the password).
+5. Now go back to _Ettercap_ and look up for the _http_ request you just made, You will see that the credentials sent in plain-text:
+
+  ![Ettercap_3](screenshots/A6/Ettercap_3.png)
+
 ### _where the vulnerability came from:_
 
 Even if we encrypt the credentials in our database (using Bcrypt for example),  the data is transmitted in clear text from client(browser) to server(webserver).
