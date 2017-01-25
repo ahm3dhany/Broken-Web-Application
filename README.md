@@ -365,7 +365,7 @@ We will use _Fiddler_ to capture HTTP traffic.
 1. If you are already logged in, log out by clicking _Sign Out_. You will be redirected to the login page.
 2. Open _Fiddler_.
 3. Now go back to you browser and enter the credentials (i.e. type "user" as the username & "password" as the password).
-4. Go back to _Fiddler_ and look up for the _post http_ request you just made, click on it.. then click on `Inspector` then click on either `TextView` or `WebForms`. You will see that the credentials sent in plain-text:
+4. Go back to _Fiddler_ and look up for the _http post_ request you just made, click on it.. then click on `Inspector` then click on either `TextView` or `WebForms`. You will see that the credentials sent in plain-text:
 ![1](screenshots/A6/Fiddler_1.png)
 ![2](screenshots/A6/Fiddler_2.png)
 
@@ -376,7 +376,7 @@ We will use _Wireshark_ to capture HTTP traffic.
 
 Now the problem with _Wireshark_ is that you can't capture the loopback interface on Windows:
 
-  > If you are trying to capture traffic from a machine to itself, that traffic will not be sent over a real network interface, even if it's being sent to an address on one of the machine's network adapters. This means that you will not see it if you are trying to capture on, for example, the interface device for the adapter to which the destination address is assigned. You will only see it if you capture on the "loopback interface", if there is such an interface and it is possible to capture on it; see the next section for information on the platforms on which you can capture on the "loopback interface".
+  > If you are trying to capture traffic from a machine to itself, that traffic will not be sent over a real network interface, even if it's being sent to an address on one of the machine's network adapters. This means that you will not see it if you are trying to capture on, for example, the interface device for the adapter to which the destination address is assigned. You will only see it if you capture on the "loopback interface", if there is such an interface and it is possible to capture on it.
 
 So if your OS (i.e. Operating System) is Windows do these steps (Otherwise skip to step 2):
 
