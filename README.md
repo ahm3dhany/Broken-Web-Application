@@ -75,7 +75,7 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
 
   ![26_part1](screenshots/XSS/26_part1.png)
   
-10. After completion of the fuzzing process, navigate to `http://localhost:8080/sixWordStories` and you will notice pop-up messages and other thing that indicates XSS vulnerability.
+10. After completion of the fuzzing process, navigate to `http://localhost:8080/sixWordStories` and you will notice pop-up messages and other things that indicates XSS vulnerability.
 
   ![31_part1](screenshots/XSS/31_part1.png)
   ![32_part1](screenshots/XSS/32_part1.png)
