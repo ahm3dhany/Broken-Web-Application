@@ -271,7 +271,7 @@ In our case, if the attacker knows the URL of the "admin" page, he can just type
 
 #### Identifying the vulnerability using _DIRB:_
 
-    > DIRB is a Web Content Scanner. It looks for existing (and/or hidden) Web Objects. It basically works by launching a dictionary based attack against a web server and analizing the response.
+> DIRB is a Web Content Scanner. It looks for existing (and/or hidden) Web Objects. It basically works by launching a dictionary based attack against a web server and analizing the response.
 
 1. We'll start by scanning our web-app content:
 
