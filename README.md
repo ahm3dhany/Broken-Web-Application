@@ -2,9 +2,9 @@
  
 Spring Web-Application that contains six different flaws -from the [OWASP 2013 Top 10 List](https://www.owasp.org/index.php/Top_10_2013-Top_10)- and their fixes.
 
-## An Overview of Web Applications
+## An Overview of The Web Application
 
-For the sake of simplicity, I stayed away from complex architecture and vague syntax. Simply the application has two main pages.. that is _/sixWordStories_ and _/quotes_. The former just contains short stories of 6 words only, and the latter contains some quotes.. Both has the ability to add new entries.
+For the sake of simplicity, I stayed away from complex architecture and vague syntax. Simply the web application has two main pages.. that is _/sixWordStories_ and _/quotes_. The former just contains short stories of 6 words only, and the latter contains some quotes.. Both has the ability to add new entries.
 
 ## Prerequisites
 
