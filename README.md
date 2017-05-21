@@ -1,12 +1,27 @@
-# **broken-web-application** 
+# **Broken-Web-Application** 
  
 Spring Web-Application that contains six different flaws -from the [OWASP 2013 Top 10 List](https://www.owasp.org/index.php/Top_10_2013-Top_10)- and their fixes.
 
-## An Overview of The Web Application
+# Index
+
+- [Index](#index)
+
+- [An Overview of The Web Application](#an-overview-of-the-web-application)
+
+- [Prerequisites](#prerequisites)
+
+- [Setup](#setup)
+
+- [Vulnerabilities](#vulnerabilities)
+  - [A3-Cross-Site Scripting (XSS)](#)
+
+
+
+# An Overview of The Web Application
 
 For the sake of simplicity, I stayed away from complex architecture and vague syntax. Simply the web application has two main pages.. that is _/sixWordStories_ and _/quotes_. The former just contains short stories of 6 words only, and the latter contains some quotes.. Both has the ability to add new entries.
 
-## Prerequisites
+# Prerequisites
 
 - JDK 1.8
 - Maven
@@ -16,14 +31,15 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
 - Ettercap [optional]
 - Netbeans (or another suitable IDE) if you are not comfortable with using the command line.
 
-## Setup
+# Setup
 
 1. _Clone_ the repository or _download the zip file_ of the repository and _import_ the project to your _IDE_.
 2. Build the Project using _Maven_, then Run it.
 
   IMPORTANT NOTE:  the Wep Application contains _In-Memory_ Authentication just for the demonstration.. so I think it is not suitable for _production_.. In real-world you may use database and make sure that your password storage is not taken place as plain-text.. use a good _hash-algorithm_ (no Collisions).. having _salt_ with it (if not you may be vulnerable to _Rainbow Table Attacks_).. you may consider using Bcrypt (Spring offers BCryptPasswordEncoder).
 
-## _Vulnerability:_ **A3-Cross-Site Scripting (XSS)**
+# **Vulnerabilities**:
+## **A3-Cross-Site Scripting (XSS)**
 
 > XSS flaws occur whenever an application takes untrusted data and sends it to a web browser without proper validation or escaping. XSS allows attackers to execute scripts in the victim’s browser which can hijack user sessions, deface web sites, or redirect the user to malicious sites.
 
@@ -94,7 +110,7 @@ here the "th:utext" (for "unescaped text") caused the XSS vulnerability, because
 
 Simply you can use `th:text` instead of `th:utext`. `th:text` is the default behaviour of "Thymeleaf" which makes sure that text should be escaped.
 
-## _Vulnerability:_ **A10-Unvalidated Redirects and Forwards**
+## **A10-Unvalidated Redirects and Forwards**
 
   > Web applications frequently redirect and forward users to other pages and websites, and use untrusted data to determine the destination pages. Without proper validation, attackers can redirect victims to phishing or malware sites, or use forwards to access unauthorized pages.
 
@@ -141,7 +157,7 @@ One of the solutions for this problem is to add an attribute `rel="noreferrer no
       <li><a th:href="@{/ourFriend}" target="_blank" rel="noreferrer noopenner">Our Friend</a></li>
   ```
 
-## _Vulnerability:_ **A8-Cross-Site Request Forgery (CSRF)**
+## **A8-Cross-Site Request Forgery (CSRF)**
 
   > A CSRF attack forces a logged-on victim’s browser to send a forged HTTP request, including the victim’s session cookie and any other automatically included authentication information, to a vulnerable web application. This allows the attacker to force the victim’s browser to generate requests the vulnerable application thinks are legitimate requests from the victim.
 
@@ -238,7 +254,7 @@ So by including these dependencies, Spring by default prevent CSRF by adding a C
 
 Notice that if the application contains the security dependencies & the `@EnableWebSecurity` annotation and still has CSRF vulnerability, so probably your custom security configuration conatins this piece of code `http.csrf().disable()` which disable CSRF protection. So to activate the CSRF protection again you shoud delete this piece of code to return the default Spring security configuration.  
 
-## _Vulnerability:_ **A7-Missing Function Level Access Control**
+## **A7-Missing Function Level Access Control**
 
 > Most web applications verify function level access rights before making that functionality visible in the UI. However, applications need to perform the same access control checks on the server when each function is accessed. If requests are not verified, attackers will be able to forge requests in order to access functionality without proper authorization.
 
@@ -348,7 +364,7 @@ Modify the _configure()_ method in our custom security configuration class (i.e.
 
 The regex (i.e. regural expression) in the _antMatchers()_ matchs any URL that starts with "/admin/". These -who matches- will be restricted to users who have the role "ADMIN".
 
-## _Vulnerability:_ **A1-Injection**
+## **A1-Injection**
 
 > Injection flaws, such as SQL, OS, and LDAP injection occur when untrusted data is sent to an interpreter as part of a command or query. The attacker’s hostile data can trick the interpreter into executing unintended commands or accessing data without proper authorization.
 
@@ -402,7 +418,7 @@ SQL injection attacks can be prevented very easy. In our example we'll use "Para
  pstmt.close();
 ```
 
-## _Vulnerability:_ **A6-Sensitive Data Exposure**
+## **A6-Sensitive Data Exposure**
 
 > Many web applications do not properly protect sensitive data, such as credit cards, tax IDs, and authentication credentials. Attackers may steal or modify such weakly protected data to conduct credit card fraud, identity theft, or other crimes. Sensitive data deserves extra protection such as encryption at rest or in transit, as well as special precautions when exchanged with the browser.
 
