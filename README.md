@@ -5,13 +5,9 @@ Spring Web-Application that contains six different flaws -from the [OWASP 2013 T
 # Index
 
 - [Index](#index)
-
 - [An Overview of The Web Application](#an-overview-of-the-web-application)
-
 - [Prerequisites](#prerequisites)
-
 - [Setup](#setup)
-
 - [Vulnerabilities](#vulnerabilities)
   - [A3-Cross-Site Scripting (XSS)](#a3-cross-site-scripting-xss)
     - [Required steps to reproduce the vulnerability](#required-steps-to-reproduce-the-vulnerability)
@@ -73,7 +69,7 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
 
 > XSS flaws occur whenever an application takes untrusted data and sends it to a web browser without proper validation or escaping. XSS allows attackers to execute scripts in the victim’s browser which can hijack user sessions, deface web sites, or redirect the user to malicious sites.
 
-### _required steps to reproduce the vulnerability:_ 
+### _Required steps to reproduce the vulnerability:_ 
 
 1. Navigate to Six-Word Sories page (e.g. http://localhost:8080/sixWordStories). And if you prompted for credentials type "user" as the username & "password" as the password.
 2. Insert any text in the input field next to "Title:" (e.g. xss).
@@ -126,7 +122,7 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
   ![31_part1](screenshots/XSS/31_part1.png)
   ![32_part1](screenshots/XSS/32_part1.png)
 
-### _where the vulnerability came from:_
+### _Where the vulnerability came from:_
 
 First of all, We use "Thymeleaf" as our template engine. So in "sixWordStories.html", there is unescaped element in the template:
 
@@ -136,7 +132,7 @@ First of all, We use "Thymeleaf" as our template engine. So in "sixWordStories.h
   
 here the "th:utext" (for "unescaped text") caused the XSS vulnerability, because it tells the "Thymeleaf" not to escape the text which may contain malicious javascript code.
 
-### _how to fix it:_
+### _How to fix it:_
 
 Simply you can use `th:text` instead of `th:utext`. `th:text` is the default behaviour of "Thymeleaf" which makes sure that text should be escaped.
 
@@ -144,7 +140,7 @@ Simply you can use `th:text` instead of `th:utext`. `th:text` is the default beh
 
   > Web applications frequently redirect and forward users to other pages and websites, and use untrusted data to determine the destination pages. Without proper validation, attackers can redirect victims to phishing or malware sites, or use forwards to access unauthorized pages.
 
-### _required steps to reproduce the vulnerability:_
+### _Required steps to reproduce the vulnerability:_
 
 1. Navigate to either Six-Word Sories page (i.e. http://localhost:8080/sixWordStories) or Quotes page (i.e. http://localhost:8080/quotes). And if you prompted for credentials type "user" as the username & "password" as the password.
 
@@ -152,7 +148,7 @@ Simply you can use `th:text` instead of `th:utext`. `th:text` is the default beh
 
 3. Check your previous page now to make sure that the redirection happened.
 
-### _where the vulnerability came from:_
+### _Where the vulnerability came from:_
 
 In "header.html" template, the "Our Friend" link is constructed using this piece of code:
 
@@ -179,7 +175,7 @@ In this example the destination page attempts to modify the location of this pag
       window.opener.location.replace('https://www.hackerrank.com');`
   ```
 
-### _how to fix it:_
+### _How to fix it:_
 
 One of the solutions for this problem is to add an attribute `rel="noreferrer noopenner"` to the hyperlink element. In our example we need to modify it to be like this:
 
@@ -191,7 +187,7 @@ One of the solutions for this problem is to add an attribute `rel="noreferrer no
 
   > A CSRF attack forces a logged-on victim’s browser to send a forged HTTP request, including the victim’s session cookie and any other automatically included authentication information, to a vulnerable web application. This allows the attacker to force the victim’s browser to generate requests the vulnerable application thinks are legitimate requests from the victim.
 
-### _required steps to reproduce the vulnerability:_
+### _Required steps to reproduce the vulnerability:_
 
 1. Navigate to "Quotes" page (i.e. http://localhost:8080/quotes). And if you prompted for credentials type "user" as the username & "password" as the password.
 2. In the Project folder (i.e. ../broken-web-application) there is a template called "csrf.html", open it on your browser (right click on "csrf.html" and choose "Open").
@@ -200,7 +196,7 @@ One of the solutions for this problem is to add an attribute `rel="noreferrer no
 3. The page contains a text "Want to win a lot of money with just ONE click!" and a button "Win Money!".. who doesn't want to win money! click on it.
 4. Navigate to "Quotes" page (i.e. http://localhost:8080/quotes), you will find that there is a new quote added with ID #99 and	Quote "Inappropriate text contains Profanity". So simply the csrf.html manipulated you by inserting a quote against your will.
 
-### _where the vulnerability came from:_
+### _Where the vulnerability came from:_
 
 The malicious page (i.e. csrf.html) has a hidden form inside of it that will be submitted if you hit the "Win Money!" button. Take a look at the code:
 
@@ -241,7 +237,7 @@ It is also worth to mention that the malicious page could be implemented to be m
   
 </html>
 ```
-### _how to fix it:_
+### _How to fix it:_
 
 The problem with this vulnerability is that there is no difference between the HTTP request sent by the malicious page and the one that sent by you. So we need to add something to the HTTP request can't be supplied by the malicious site. So in order to complete the request the sender needs to provide the cookie and a token. Every time a request is sent, the server must compare the expected value of the Token with Token itself and if there is no match, the request will not be completed.
 
@@ -288,7 +284,7 @@ Notice that if the application contains the security dependencies & the `@Enable
 
 > Most web applications verify function level access rights before making that functionality visible in the UI. However, applications need to perform the same access control checks on the server when each function is accessed. If requests are not verified, attackers will be able to forge requests in order to access functionality without proper authorization.
 
-### _required steps to reproduce the vulnerability:_
+### _Required steps to reproduce the vulnerability:_
 
 _Inception:_ Even if the UI(i.e. User Interface) doesn't show navigation to the unauthorized "admin" page, the attacker can simply force the browser to target the "admin" page URL.
 In our case, if the attacker knows the URL of the "admin" page, he can just type http://localhost:8080/admin in the address bar of the browser and he is successfully navigated to the unauthorized page. The "admin" page allows whoever can access it to delete any story or quote.
@@ -340,7 +336,7 @@ In our case, if the attacker knows the URL of the "admin" page, he can just type
   
   we can see clearly that DIRB has discovered the hidden web page (i.e. /admin) easily.
   
-### _where the vulnerability came from:_
+### _Where the vulnerability came from:_
 
 Simply the application doesn't have RBAC (i.e. role-based access control) if we can say so.
 That is the application has nothing that prevent someone to access some resource based on his role(e.g. user, admin.. etc).
@@ -374,7 +370,7 @@ Let's take a look at our custom security configuration:
 
 So even if our app offers some sort of authentication, but he doesn't offer authorization at all.
 
-### _how to fix it:_
+### _How to fix it:_
 
 Modify the _configure()_ method in our custom security configuration class (i.e. _SecurityConfig_) to be like that:
 
@@ -398,7 +394,7 @@ The regex (i.e. regural expression) in the _antMatchers()_ matchs any URL that s
 
 > Injection flaws, such as SQL, OS, and LDAP injection occur when untrusted data is sent to an interpreter as part of a command or query. The attacker’s hostile data can trick the interpreter into executing unintended commands or accessing data without proper authorization.
 
-### _required steps to reproduce the vulnerability:_
+### _Required steps to reproduce the vulnerability:_
 
 1. Navigate to Quotes page (e.g. http://localhost:8080/quotes). And if you prompted for credentials type "user" as the username & "password" as the password.
 2. In the input field next to "ID:", type a numeric value (e.g. 15).
@@ -418,7 +414,7 @@ The regex (i.e. regural expression) in the _antMatchers()_ matchs any URL that s
   ![5_part2_b](screenshots/SQLi/5_part2_b.png)
   ![8_part2_b](screenshots/SQLi/8_part2_b.png)
 
-### _where the vulnerability came from:_
+### _Where the vulnerability came from:_
 
 In the _QuoteService_ class specifically in the _addQuote()_ method, we used the so called "Dynamic Queries" to concatenate data that is supplied by the user -who maybe is a potential attacker- to the query itself. Take a look at the vulnerable code:
 
@@ -435,7 +431,7 @@ After the Malicious Input is supplied (e.g. `15` & `take care'); DROP TABLE Quot
  INSERT INTO Quotes (id, content) VALUES ('15', 'take care'); DROP TABLE Quotes;--')
 ```
 
-### _how to fix it:_
+### _How to fix it:_
 
 SQL injection attacks can be prevented very easy. In our example we'll use "Parameterized Queries". As I wrote my app with Java, I'll use "Prepared Statements". The SQL statement is precompiled and stored in a PreparedStatement object. In order to fix the vulnerability we have to substitute the vulnerable code with this safe code:
 
@@ -452,7 +448,7 @@ SQL injection attacks can be prevented very easy. In our example we'll use "Para
 
 > Many web applications do not properly protect sensitive data, such as credit cards, tax IDs, and authentication credentials. Attackers may steal or modify such weakly protected data to conduct credit card fraud, identity theft, or other crimes. Sensitive data deserves extra protection such as encryption at rest or in transit, as well as special precautions when exchanged with the browser.
 
-### _required steps to reproduce the vulnerability:_ 
+### _Required steps to reproduce the vulnerability:_ 
 
 1. If you are already logged in, log out by clicking _Sign Out_. You will be redirected to the login page.
 2. Enter the credentials (i.e. type "user" as the username & "password" as the password).
@@ -520,14 +516,14 @@ We will use _Ettercap_ to capture HTTP traffic.
 
   ![Ettercap_3](screenshots/A6/Ettercap_3.png)
 
-### _where the vulnerability came from:_
+### _Where the vulnerability came from:_
 
 Even if we encrypt the credentials in our database (using Bcrypt for example),  the data is transmitted in clear text from client(browser) to server(webserver).
 We saw earlier that in that case if somebody is able to capture network traffic then he can look up for that information easily. 
 
   ![before_1](screenshots/A6/before_1.png)
 
-### _how to fix it:_
+### _How to fix it:_
 
 1. Genarate a `Self Signed Certificate`: As we are just testing our application, we don't bother purchasing a trusted certificate. So we will generate our own certificate. 
 
