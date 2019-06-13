@@ -83,11 +83,11 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
 
 1. Open the OWASP Zed Attack Proxy (ZAP), on the `quick start` tab type "http://localhost:8080" inside the `URL to attack` & click on `Attack`. You will notice that all requests refused by the server because you have to login first. So we will _fuzz_ the username & password.
 
-2. Click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:login(password,submit,username)` and click `select`. Then highlight the value of the username parameter and add a file that contains most common usernames as a payload (e.g. [top-usernames-shortlist.txt](https://github.com/danielmiessler/SecLists/blob/master/Usernames/top-usernames-shortlist.txt)). Do the same for the value of the password parameter but this time with a file contains the most common passwords (e.g. [top100.txt](https://github.com/danielmiessler/SecLists/blob/master/Passwords/darkweb2017-top100.txt)). Finally click on `Start Fuzzer`.
+2. Click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:login(password,submit,username)` and click `select`. Then highlight the value of the username parameter and add a file that contains most common usernames as a payload (e.g. [top-usernames-shortlist.txt](https://github.com/danielmiessler/SecLists/blob/master/Usernames/top-usernames-shortlist.txt)). Do the same for the value of the password parameter but this time with a file contains the most common passwords (e.g. [probable-v2-top207.txt](https://github.com/danielmiessler/SecLists/blob/master/Passwords/probable-v2-top207.txt)). Finally click on `Start Fuzzer`.
   
   ![13_part1](screenshots/XSS/13_part1.png)
   
-3. After the fuzzing is completed, we need to search for something odd in the results. We notice that the size of the response header is the same for all requests except for two requests: the first request contains(user, password) as a payload, and the second contains(admin, test) as a payload. those are the right credentials we need.
+3. After the fuzzing is completed, we need to search for something odd in the results. We notice that the size of the *response header* is the same for all requests except for two requests: the first request contains(user, password) as a payload, and the second contains(admin, test) as a payload. those are the right credentials we need.
 
   ![14_part1](screenshots/XSS/14_part1.png)
   
