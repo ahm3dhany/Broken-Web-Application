@@ -62,12 +62,10 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
 1. _Clone_ the repository or _download the zip file_ of the repository and _import_ the project to your _IDE_.
 2. Build the Project using _Maven_, then Run it.
 
-  IMPORTANT NOTE:  the Wep Application contains _In-Memory_ Authentication just for the demonstration.. so I think it is not suitable for _production_.. In real-world you may use database and make sure that your password storage is not taken place as plain-text.. use a good _hash-algorithm_ (no Collisions).. having _salt_ with it (if not you may be vulnerable to _Rainbow Table Attacks_).. you may consider using Bcrypt (Spring offers BCryptPasswordEncoder).
-
 # **Vulnerabilities**:
 ## **A3-Cross-Site Scripting (XSS)**
 
-> XSS flaws occur whenever an application takes untrusted data and sends it to a web browser without proper validation or escaping. XSS allows attackers to execute scripts in the victim’s browser which can hijack user sessions, deface web sites, or redirect the user to malicious sites.
+> XSS flaws occur whenever an application takes untrusted data and sends it to a web browser without proper validation or escaping. XSS allows attackers to execute scripts in the victimâ€™s browser which can hijack user sessions, deface web sites, or redirect the user to malicious sites.
 
 ### _Required steps to reproduce the vulnerability:_ 
 
@@ -78,7 +76,7 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
   ```javascript
   	</noscript><br><code onmouseover=a=eval;b=alert;a(b(/XSS/.source));>MOVE MOUSE OVER THIS AREA</code>
   ```
- and click on "Add".
+ and click on "Add".  
 4. You can see that new Story has been added and if you hover your mouse on it you got a Popup message-box that says "XSS".
 
 #### Identifying the vulnerability using _OWASP Zed Attack Proxy (ZAP):_
@@ -185,7 +183,7 @@ One of the solutions for this problem is to add an attribute `rel="noreferrer no
 
 ## **A8-Cross-Site Request Forgery (CSRF)**
 
-  > A CSRF attack forces a logged-on victim’s browser to send a forged HTTP request, including the victim’s session cookie and any other automatically included authentication information, to a vulnerable web application. This allows the attacker to force the victim’s browser to generate requests the vulnerable application thinks are legitimate requests from the victim.
+  > A CSRF attack forces a logged-on victimâ€™s browser to send a forged HTTP request, including the victimâ€™s session cookie and any other automatically included authentication information, to a vulnerable web application. This allows the attacker to force the victimâ€™s browser to generate requests the vulnerable application thinks are legitimate requests from the victim.
 
 ### _Required steps to reproduce the vulnerability:_
 
@@ -392,7 +390,7 @@ The regex (i.e. regural expression) in the _antMatchers()_ matchs any URL that s
 
 ## **A1-Injection**
 
-> Injection flaws, such as SQL, OS, and LDAP injection occur when untrusted data is sent to an interpreter as part of a command or query. The attacker’s hostile data can trick the interpreter into executing unintended commands or accessing data without proper authorization.
+> Injection flaws, such as SQL, OS, and LDAP injection occur when untrusted data is sent to an interpreter as part of a command or query. The attackerâ€™s hostile data can trick the interpreter into executing unintended commands or accessing data without proper authorization.
 
 ### _Required steps to reproduce the vulnerability:_
 
