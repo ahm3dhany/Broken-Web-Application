@@ -96,7 +96,7 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
   ![15_part1](screenshots/XSS/15_part1.png)
   
 5. Choose `Authentication` and select `Form-based Authentication` from the drop-down list, Choose `http://localhost:8080/login` as the Login Form Target URL, then choose `username` as the username parameter & `password` as the password parameter. Finally set the *logged out indicators* to tell ZAP how to identify whether an authentication succeeded or not.. to do that in our case set `login` as the regex pattern identified in logged out response messages.  
-(Explanation: the string "Location: http://[HostIp]:[Port]/**login**" appears at the response header if we're not already authenticated. the **location** field is used to redirect us to a location other than the Requested URL).  
+(Explanation: the string "Location: http://[HostIp]:[Port]/**login**" appears at the response header if we're not already authenticated. the **location** response-header field is used to redirect us to a location other than the Requested URL).  
 
   ![18_part1](screenshots/XSS/18_part1.png)
 
