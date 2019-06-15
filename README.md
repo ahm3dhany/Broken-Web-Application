@@ -95,7 +95,7 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
 
   ![15_part1](screenshots/XSS/15_part1.png)
   
-5. Choose `Authentication` and select `Form-based Authentication` from the drop-down list. Click on `Select` and choose `Sites` then `http://localhost:8080` then `POST:login(password,submit,username)` then click on `Select`. `http://localhost:8080/login` will appear as the Login Form Target URL, then choose `username` as the username parameter & `password` as the password parameter. Finally set the *logged out indicators* to tell ZAP how to identify whether an authentication succeeded or not.. to do that in our case set `login` as the regex pattern identified in logged out response messages.  
+5. Choose `Authentication` and select `Form-based Authentication` from the drop-down list. Click on `Select` and choose `Sites` then `http://localhost:8080` then `POST:login(password,submit,username)` then click on `Select`. `http://localhost:8080/login` will appear as the Login Form Target URL. Then choose `username` as the username parameter & `password` as the password parameter. Finally set the *logged out indicators* to tell ZAP how to identify whether an authentication succeeded or not.. to do that in our case set `login` as the regex pattern identified in logged out response messages.  
 (Explanation: the string "Location: http://[HostIp]:[Port]/**login**" appears at the response header if we're not already authenticated. the **location** response-header field is used to redirect us to a location other than the Requested URL).  
 
   ![18_part1](screenshots/XSS/18_part1.png)
@@ -112,10 +112,16 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
 
   ![22_part1](screenshots/XSS/22_part1.png)
   
-9. Now click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:sixWordStories(content,title)` and click `select`. Then highlight the value of the content parameter and add a `file fuzzer` (XSS that contains [XSS101, XSS102 and XSS HTML Breaking]) as a payload. Finally click on `Start Fuzzer`.
+9. Now click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:sixWordStories(content,title)` and click `select`. Then highlight the value of the content parameter and add a `file fuzzer` (XSS that contains [XSS101, XSS102 and XSS HTML Breaking]) as a payload.  
 
   ![26_part1](screenshots/XSS/26_part1.png)
   
+Click on `Message Processors` tab, click on `Add` and select `User Message Processor` as the type, `http://localhost:8080` as the context and `Normal User` as the user.  
+
+  ![addUserMessageProcessor](screenshots/XSS/addUserMessageProcessor.png)
+
+Finally click on `Start Fuzzer`.  
+
 10. After completion of the fuzzing process, navigate to `http://localhost:8080/sixWordStories` and you will notice pop-up messages and other things that indicates XSS vulnerability.
 
   ![31_part1](screenshots/XSS/31_part1.png)
