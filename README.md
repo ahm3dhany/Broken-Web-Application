@@ -116,11 +116,11 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
 
   ![26_part1](screenshots/XSS/26_part1.png)
   
-Click on `Message Processors` tab, click on `Add` and select `User Message Processor` as the type, `http://localhost:8080` as the context and `Normal User` as the user.  
+  Click on `Message Processors` tab, click on `Add` and select `User Message Processor` as the type, `http://localhost:8080` as the context and `Normal User` as the user.  
 
   ![addUserMessageProcessor](screenshots/XSS/addUserMessageProcessor.png)
 
-Finally click on `Start Fuzzer`.  
+  Finally click on `Start Fuzzer`.  
 
 10. After completion of the fuzzing process, navigate to `http://localhost:8080/sixWordStories` and you will notice pop-up messages and other things that indicates XSS vulnerability.
 
