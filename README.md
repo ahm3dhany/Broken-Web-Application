@@ -81,7 +81,7 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
 
 #### Identifying the vulnerability using _OWASP Zed Attack Proxy (ZAP):_
 
-1. Open the OWASP Zed Attack Proxy (ZAP), on the `quick start` tab type "http://localhost:8080" inside the `URL to attack` & click on `Attack`. You will notice that all requests refused by the server because you have to login first. So we will _fuzz_ the username & password.
+1. Open the OWASP Zed Attack Proxy (ZAP), on the `quick start` tab type "http://localhost:8080" (or http://[HostIp]:8080 for example "http://192.168.1.3:8080") inside the `URL to attack` & click on `Attack`. You will notice that all requests refused by the server because you have to login first. So we will _fuzz_ the username & password.
 
 2. Click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:login(password,submit,username)` and click `select`. Then highlight the value of the username parameter and add a file that contains most common usernames as a payload (e.g. [top-usernames-shortlist.txt](https://github.com/danielmiessler/SecLists/blob/master/Usernames/top-usernames-shortlist.txt)). Do the same for the value of the password parameter but this time with a file contains the most common passwords (e.g. [probable-v2-top207.txt](https://github.com/danielmiessler/SecLists/blob/master/Passwords/probable-v2-top207.txt)). Finally click on `Start Fuzzer`.
   
@@ -95,7 +95,7 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
 
   ![15_part1](screenshots/XSS/15_part1.png)
   
-5. Choose `Authentication` and select `Form-based Authentication` from the drop-down list, Choose `http://localhost:8080/login` as the Login Form Target URL, then choose `username` as the username parameter & `password` as the password parameter.
+5. Choose `Authentication` and select `Form-based Authentication` from the drop-down list, Choose `http://localhost:8080/login` as the Login Form Target URL, then choose `username` as the username parameter & `password` as the password parameter. Finally set the *logged out indicators* to tell ZAP how to identify whether an authentication succeeded or not.. to do that in our case set `login` as the regex pattern identified in logged out response messages. (the string "Location: http://[hostIp]:[port]/**login**" appears at the response header if we're not already authenticated. the **location** field is used to redirect us to a location other than the Requested URL).  
 
   ![18_part1](screenshots/XSS/18_part1.png)
 
