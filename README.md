@@ -195,9 +195,8 @@ One of the solutions for this problem is to add an attribute `rel="noreferrer no
 ### _Required steps to reproduce the vulnerability:_
 
 1. Navigate to "Quotes" page (i.e. http://localhost:8080/quotes). And if you prompted for credentials type "user" as the username & "password" as the password.
-2. In the Project folder (i.e. ../broken-web-application) there is a template called "csrf.html", open it on your browser (right click on "csrf.html" and choose "Open").
-
-  [IMPORTANT: open the "csrf.html" with the same browser you have logged in with]
+2. In the Project folder (i.e. ../broken-web-application) there is a template called "csrf.html", open it on your browser (right click on "csrf.html" and choose "Open").  
+[IMPORTANT: open the "csrf.html" with the same browser you have logged in with]  
 3. The page contains a text "Want to win a lot of money with just ONE click!" and a button "Win Money!".. who doesn't want to win money! click on it.
 4. Navigate to "Quotes" page (i.e. http://localhost:8080/quotes), you will find that there is a new quote added with ID #99 and	Quote "Inappropriate text contains Profanity". So simply the csrf.html manipulated you by inserting a quote against your will.
 
