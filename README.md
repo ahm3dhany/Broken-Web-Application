@@ -297,7 +297,7 @@ In our case, if the attacker knows the URL of the "admin" page, he can just type
 
 2. In in the address bar of your browser , force it to navigate to the admin page (i.e. http://localhost:8080/admin).
 
-3. Although you are logged in as a normal user, the "admin panel" page is shown and you can now delete any story or quote like if you are the administrator (some sort of privilege escalation).
+3. Although you are logged in as a normal user, the "admin panel" page is shown and you can now delete any story or quote like if you are the administrator.
 
 #### Identifying the vulnerability using _OWASP Zed Attack Proxy (ZAP):_
 
