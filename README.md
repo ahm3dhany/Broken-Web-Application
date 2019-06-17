@@ -361,8 +361,7 @@ Let's take a look at our custom security configuration:
     }
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {        
-      // In-memory Authentication: not Ideal for real world (In production use Bcrypt for example)  
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {          
       auth
         .inMemoryAuthentication()
         .withUser("user").password("password").roles("USER")
