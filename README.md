@@ -303,7 +303,7 @@ In our case, if the attacker knows the URL of the "admin" page, he can just type
 
 (Notice that you can identify this vulnerability with _OWASP DirBuster_ as well).
 
-1. Complete the steps from 1 to 7 in [`Identifying the XSS vulnerability using OWASP ZAP`](#identifying-the-vulnerability-using-owasp-zed-attack-proxy-zap) section -if you didn't do it already-.
+1. Complete the steps from 1 to 7 in [Identifying the XSS vulnerability using OWASP ZAP](#identifying-the-vulnerability-using-owasp-zed-attack-proxy-zap) section -if you didn't do it already-.
 
 2. Choose "Forced Browse":
 
