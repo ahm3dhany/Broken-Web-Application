@@ -112,7 +112,7 @@ For the sake of simplicity, I stayed away from complex architecture and vague sy
 
   ![22_part1](screenshots/XSS/22_part1.png)
   
-9. Now click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:sixWordStories(content,title)` and click `select`. Then highlight the value of the content parameter and add a `file fuzzer` (XSS that contains [XSS101, XSS102 and XSS HTML Breaking]) as a payload.  
+9. Now click on `New Fuzzer` and choose `http://localhost:8080`, then choose `POST:sixWordStories(content,title)` and click `select`. Then highlight the value of the content parameter and add a `file fuzzer` (XSS that contains [XSS101]) as a payload.  
 
   ![26_part1](screenshots/XSS/26_part1.png)
   
